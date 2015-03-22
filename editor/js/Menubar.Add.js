@@ -50,6 +50,33 @@ Menubar.Add = function ( editor ) {
 
 	options.add( new UI.HorizontalRule() );
 
+	// Text
+
+	var option = new UI.Panel();
+	option.setClass( 'option' );
+	option.setTextContent( 'Text' );
+	option.onClick( function () {
+
+		var width = 100;
+		var height = 100;
+		var depth = 100;
+
+		var widthSegments = 1;
+		var heightSegments = 1;
+		var depthSegments = 1;
+
+		var geometry = new THREE.TextGeometry2('euph', {
+			font: 'optimer',
+		});
+		var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial() );
+		mesh.name = 'Text ' + ( ++ meshCount );
+
+		editor.addObject( mesh );
+		editor.select( mesh );
+
+	} );
+	options.add( option );
+
 	// Plane
 
 	var option = new UI.Panel();
@@ -73,6 +100,7 @@ Menubar.Add = function ( editor ) {
 
 	} );
 	options.add( option );
+
 
 	// Box
 

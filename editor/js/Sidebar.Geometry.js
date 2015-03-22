@@ -178,6 +178,10 @@ Sidebar.Geometry = function ( editor ) {
 
 				parameters.add( new Sidebar.Geometry.TorusKnotGeometry( signals, object ) );
 
+			} else if ( geometry instanceof THREE.TextGeometry2 ) {
+
+				parameters.add( new Sidebar.Geometry.TextGeometry2( signals, object ) );
+
 			}
 
 			parameters.add( new Sidebar.Geometry.Modifiers( signals, object ) );

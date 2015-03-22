@@ -68,9 +68,8 @@
 				var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
 
 				var geometry = new THREE.TorusKnotGeometry( 50, 20, 50, 20 )
-// debugger;
-				// var geometry = new THREE.TextGeometry('hello')
-				var geometry = new THREE.TextGeometry2('hello')
+
+				var geometry = new THREE.TextGeometry2('Hello, world!')
 
 
 				var object = new THREE.Mesh( geometry, material );

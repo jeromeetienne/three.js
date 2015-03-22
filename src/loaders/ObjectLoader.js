@@ -84,6 +84,23 @@ THREE.ObjectLoader.prototype = {
 
 				switch ( data.type ) {
 
+					case 'TextGeometry2':
+
+						geometry = new THREE[ data.type ](
+							data.text,
+							{
+								font : data.font,
+								weight : data.weight,
+								amount : data.amount,
+								bevelThickness : data.bevelThickness,
+								bevelSize : data.bevelSize,
+								bevelEnabled : data.bevelEnabled,
+							}
+						);
+
+						break;
+
+
 					case 'PlaneGeometry':
 					case 'PlaneBufferGeometry':
 
