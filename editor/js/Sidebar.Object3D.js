@@ -133,12 +133,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	// fov
 
-	var objectFovRow = new UI.Panel();
-	var objectFov = new UI.Number().onChange( update );
-
-	objectFovRow.add( new UI.Text( 'Fov' ).setWidth( '90px' ) );
-	objectFovRow.add( objectFov );
-
+	var objectFovRow	= new UI.NumberRow().setLabel('Fov').onChange(update)
 	container.add( objectFovRow );
 
 	// near
@@ -294,7 +289,7 @@ Sidebar.Object3D = function ( editor ) {
 
 			if ( object.fov !== undefined ) {
 
-				object.fov = objectFov.getValue();
+				objectFovRow.update(object, 'fov')
 				object.updateProjectionMatrix();
 
 			}
@@ -375,7 +370,7 @@ Sidebar.Object3D = function ( editor ) {
 
 		var properties = {
 			'parent': objectParentRow,
-			'fov': objectFovRow,
+			// 'fov': objectFovRow,
 			'near': objectNearRow,
 			'far': objectFarRow,
 			'intensity': objectIntensityRow,
@@ -475,11 +470,7 @@ Sidebar.Object3D = function ( editor ) {
 
 		objectScaleRow.updateUI( object.scale )
 
-		if ( object.fov !== undefined ) {
-
-			objectFov.setValue( object.fov );
-
-		}
+		objectFovRow.updateUI( object.fov );
 
 		if ( object.near !== undefined ) {
 
