@@ -673,8 +673,12 @@ UI.Number = function ( number ) {
 
 		distance += ( pointer[ 0 ] - prevPointer[ 0 ] ) - ( pointer[ 1 ] - prevPointer[ 1 ] );
 
-		var number = onMouseDownValue + ( distance / ( event.shiftKey ? 5 : 50 ) ) * scope.step;
+		var accelerator = 50
+		if( event.shiftKey )	accelerator /= 10
+		if( event.metaKey )	accelerator /= 100
 
+		var number = onMouseDownValue + ( distance / accelerator ) * scope.step;
+		
 		dom.value = Math.min( scope.max, Math.max( scope.min, number ) ).toFixed( scope.precision );
 
 		if ( currentValue !== dom.value ) dom.dispatchEvent( changeEvent );
