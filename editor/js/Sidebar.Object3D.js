@@ -124,17 +124,12 @@ Sidebar.Object3D = function ( editor ) {
 
 	// scale
 
-	var objectScaleRow = new UI.Panel();
-	var objectScaleLock = new UI.Checkbox().setPosition( 'absolute' ).setLeft( '75px' );
-	var objectScaleX = new UI.Number( 1 ).setRange( 0.01, Infinity ).setWidth( '50px' ).onChange( updateScaleX );
-	var objectScaleY = new UI.Number( 1 ).setRange( 0.01, Infinity ).setWidth( '50px' ).onChange( updateScaleY );
-	var objectScaleZ = new UI.Number( 1 ).setRange( 0.01, Infinity ).setWidth( '50px' ).onChange( updateScaleZ );
-
-	objectScaleRow.add( new UI.Text( 'Scale' ).setWidth( '90px' ) );
-	objectScaleRow.add( objectScaleLock );
-	objectScaleRow.add( objectScaleX, objectScaleY, objectScaleZ );
-
+	var objectScaleRow	= new UI.LockableVector3Row().setLabel('Scale').onChange(update)
 	container.add( objectScaleRow );
+	objectScaleRow.setLocked(true)
+	objectScaleRow.valueX.setRange(0.01, Infinity).setPrecision(2)
+	objectScaleRow.valueY.setRange(0.01, Infinity).setPrecision(2)
+	objectScaleRow.valueZ.setRange(0.01, Infinity).setPrecision(2)
 
 	// fov
 
@@ -271,59 +266,6 @@ Sidebar.Object3D = function ( editor ) {
 	container.add( objectUserDataRow );
 
 
-	//
-
-	function updateScaleX() {
-
-		var object = editor.selected;
-
-		if ( objectScaleLock.getValue() === true ) {
-
-			var scale = objectScaleX.getValue() / object.scale.x;
-
-			objectScaleY.setValue( objectScaleY.getValue() * scale );
-			objectScaleZ.setValue( objectScaleZ.getValue() * scale );
-
-		}
-
-		update();
-
-	}
-
-	function updateScaleY() {
-
-		var object = editor.selected;
-
-		if ( objectScaleLock.getValue() === true ) {
-
-			var scale = objectScaleY.getValue() / object.scale.y;
-
-			objectScaleX.setValue( objectScaleX.getValue() * scale );
-			objectScaleZ.setValue( objectScaleZ.getValue() * scale );
-
-		}
-
-		update();
-
-	}
-
-	function updateScaleZ() {
-
-		var object = editor.selected;
-
-		if ( objectScaleLock.getValue() === true ) {
-
-			var scale = objectScaleZ.getValue() / object.scale.z;
-
-			objectScaleX.setValue( objectScaleX.getValue() * scale );
-			objectScaleY.setValue( objectScaleY.getValue() * scale );
-
-		}
-
-		update();
-
-	}
-
 	function update() {
 
 		var object = editor.selected;
@@ -348,9 +290,7 @@ Sidebar.Object3D = function ( editor ) {
 			object.rotation.y = objectRotationY.getValue();
 			object.rotation.z = objectRotationZ.getValue();
 
-			object.scale.x = objectScaleX.getValue();
-			object.scale.y = objectScaleY.getValue();
-			object.scale.z = objectScaleZ.getValue();
+			objectScaleRow.update(object.scale)
 
 			if ( object.fov !== undefined ) {
 
@@ -533,9 +473,7 @@ Sidebar.Object3D = function ( editor ) {
 		objectRotationY.setValue( object.rotation.y )
 		objectRotationZ.setValue( object.rotation.z )
 
-		objectScaleX.setValue( object.scale.x );
-		objectScaleY.setValue( object.scale.y );
-		objectScaleZ.setValue( object.scale.z );
+		objectScaleRow.updateUI( object.scale )
 
 		if ( object.fov !== undefined ) {
 

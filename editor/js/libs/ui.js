@@ -52,8 +52,15 @@ UI.Element.prototype = {
 
 		return this;
 
-	}
+	},
 
+	setTitle: function ( value ) {
+
+		this.dom.title = value;
+
+		return this;
+
+	},
 }
 
 // properties
