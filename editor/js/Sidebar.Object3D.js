@@ -107,15 +107,19 @@ Sidebar.Object3D = function ( editor ) {
 
 	// position
 
-	var objectPositionRow = new UI.Panel();
-	var objectPositionX = new UI.Number().setWidth( '50px' ).onChange( update );
-	var objectPositionY = new UI.Number().setWidth( '50px' ).onChange( update );
-	var objectPositionZ = new UI.Number().setWidth( '50px' ).onChange( update );
+	// var objectPositionRow = new UI.Panel();
+	// var objectPositionX = new UI.Number().setWidth( '50px' ).onChange( update );
+	// var objectPositionY = new UI.Number().setWidth( '50px' ).onChange( update );
+	// var objectPositionZ = new UI.Number().setWidth( '50px' ).onChange( update );
+	// 
+	// objectPositionRow.add( new UI.Text( 'Position' ).setWidth( '90px' ) );
+	// objectPositionRow.add( objectPositionX, objectPositionY, objectPositionZ );
+	// 
+	// container.add( objectPositionRow );
 
-	objectPositionRow.add( new UI.Text( 'Position' ).setWidth( '90px' ) );
-	objectPositionRow.add( objectPositionX, objectPositionY, objectPositionZ );
-
+	var objectPositionRow = new UI.Vector3Row().setLabel('Position').onChange( update );
 	container.add( objectPositionRow );
+
 
 	// rotation
 
@@ -353,10 +357,11 @@ Sidebar.Object3D = function ( editor ) {
 				}
 
 			}
-
-			object.position.x = objectPositionX.getValue();
-			object.position.y = objectPositionY.getValue();
-			object.position.z = objectPositionZ.getValue();
+			
+			objectPositionRow.update(object.position)
+			// object.position.x = objectPositionX.getValue();
+			// object.position.y = objectPositionY.getValue();
+			// object.position.z = objectPositionZ.getValue();
 
 			object.rotation.x = objectRotationX.getValue();
 			object.rotation.y = objectRotationY.getValue();
@@ -540,10 +545,11 @@ Sidebar.Object3D = function ( editor ) {
 			objectParent.setValue( object.parent.id );
 
 		}
-
-		objectPositionX.setValue( object.position.x );
-		objectPositionY.setValue( object.position.y );
-		objectPositionZ.setValue( object.position.z );
+		
+		objectPositionRow.updateUI( object.position )
+		// objectPositionX.setValue( object.position.x );
+		// objectPositionY.setValue( object.position.y );
+		// objectPositionZ.setValue( object.position.z );
 
 		objectRotationX.setValue( object.rotation.x );
 		objectRotationY.setValue( object.rotation.y );
