@@ -403,7 +403,7 @@ Sidebar.Object3D = function ( editor ) {
 
 			if ( object.exponent !== undefined ) {
 
-				object.exponent = objectExponent.getValue();
+				object.exponent = objectExponent.getValue(); 
 
 			}
 
