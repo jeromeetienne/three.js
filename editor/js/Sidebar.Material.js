@@ -93,13 +93,8 @@ Sidebar.Material = function ( editor ) {
 
 	// color
 
-	var materialColorRow = new UI.Panel();
-	var materialColor = new UI.Color().onChange( update );
-
-	materialColorRow.add( new UI.Text( 'Color' ).setWidth( '90px' ) );
-	materialColorRow.add( materialColor );
-
-	container.add( materialColorRow );
+	var materialColorRow = new UI.ColorRow().setLabel('Color').onChange( update )
+	container.add( materialColorRow )
 
 	// emissive
 
@@ -391,12 +386,13 @@ Sidebar.Material = function ( editor ) {
 				object.material = material;
 
 			}
+			
+			if( material.color !== undefined ){
 
-			if ( material.color !== undefined ) {
-
-				material.color.setHex( materialColor.getHexValue() );
+				material.color.setHex( materialColorRow.getHexValue() )
 
 			}
+			
 
 			if ( material.emissive !== undefined ) {
 
@@ -634,7 +630,6 @@ Sidebar.Material = function ( editor ) {
 
 		var properties = {
 			'name': materialNameRow,
-			'color': materialColorRow,
 			'emissive': materialEmissiveRow,
 			'specular': materialSpecularRow,
 			'shininess': materialShininessRow,
@@ -692,11 +687,9 @@ Sidebar.Material = function ( editor ) {
 
 			materialClass.setValue( material.type );
 
-			if ( material.color !== undefined ) {
 
-				materialColor.setHexValue( material.color.getHexString() );
-
-			}
+			materialColorRow.updateUI(material.color.getHex())
+			
 
 			if ( material.emissive !== undefined ) {
 
