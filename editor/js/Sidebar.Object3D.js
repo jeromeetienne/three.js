@@ -107,19 +107,8 @@ Sidebar.Object3D = function ( editor ) {
 
 	// position
 
-	// var objectPositionRow = new UI.Panel();
-	// var objectPositionX = new UI.Number().setWidth( '50px' ).onChange( update );
-	// var objectPositionY = new UI.Number().setWidth( '50px' ).onChange( update );
-	// var objectPositionZ = new UI.Number().setWidth( '50px' ).onChange( update );
-	// 
-	// objectPositionRow.add( new UI.Text( 'Position' ).setWidth( '90px' ) );
-	// objectPositionRow.add( objectPositionX, objectPositionY, objectPositionZ );
-	// 
-	// container.add( objectPositionRow );
-
 	var objectPositionRow = new UI.Vector3Row().setLabel('Position').onChange( update );
 	container.add( objectPositionRow );
-
 
 	// rotation
 
@@ -249,12 +238,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	// visible
 
-	var objectVisibleRow = new UI.Panel();
-	var objectVisible = new UI.Checkbox().onChange( update );
-
-	objectVisibleRow.add( new UI.Text( 'Visible' ).setWidth( '90px' ) );
-	objectVisibleRow.add( objectVisible );
-
+	var objectVisibleRow	= new UI.CheckboxRow().setLabel('Visible').onChange( update )
 	container.add( objectVisibleRow );
 
 	// user data
@@ -359,9 +343,6 @@ Sidebar.Object3D = function ( editor ) {
 			}
 			
 			objectPositionRow.update(object.position)
-			// object.position.x = objectPositionX.getValue();
-			// object.position.y = objectPositionY.getValue();
-			// object.position.z = objectPositionZ.getValue();
 
 			object.rotation.x = objectRotationX.getValue();
 			object.rotation.y = objectRotationY.getValue();
@@ -432,7 +413,7 @@ Sidebar.Object3D = function ( editor ) {
 
 			}
 
-			object.visible = objectVisible.getValue();
+			objectVisibleRow.update(object, 'visible')
 
 			try {
 
@@ -547,13 +528,10 @@ Sidebar.Object3D = function ( editor ) {
 		}
 		
 		objectPositionRow.updateUI( object.position )
-		// objectPositionX.setValue( object.position.x );
-		// objectPositionY.setValue( object.position.y );
-		// objectPositionZ.setValue( object.position.z );
 
-		objectRotationX.setValue( object.rotation.x );
-		objectRotationY.setValue( object.rotation.y );
-		objectRotationZ.setValue( object.rotation.z );
+		objectRotationX.setValue( object.rotation.x )
+		objectRotationY.setValue( object.rotation.y )
+		objectRotationZ.setValue( object.rotation.z )
 
 		objectScaleX.setValue( object.scale.x );
 		objectScaleY.setValue( object.scale.y );
@@ -619,7 +597,7 @@ Sidebar.Object3D = function ( editor ) {
 
 		}
 
-		objectVisible.setValue( object.visible );
+		objectVisibleRow.updateUI( object.visible );
 
 		try {
 
