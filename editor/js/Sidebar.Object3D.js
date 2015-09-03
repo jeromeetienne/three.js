@@ -112,14 +112,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	// rotation
 
-	var objectRotationRow = new UI.Panel();
-	var objectRotationX = new UI.Number().setWidth( '50px' ).onChange( update );
-	var objectRotationY = new UI.Number().setWidth( '50px' ).onChange( update );
-	var objectRotationZ = new UI.Number().setWidth( '50px' ).onChange( update );
-
-	objectRotationRow.add( new UI.Text( 'Rotation' ).setWidth( '90px' ) );
-	objectRotationRow.add( objectRotationX, objectRotationY, objectRotationZ );
-
+	var objectRotationRow = new UI.Vector3Row().setLabel('Rotation').onChange( update );
 	container.add( objectRotationRow );
 
 	// scale
@@ -138,22 +131,28 @@ Sidebar.Object3D = function ( editor ) {
 
 	// near
 
-	var objectNearRow = new UI.Panel();
-	var objectNear = new UI.Number().onChange( update );
+	// var objectNearRow = new UI.Panel();
+	// var objectNear = new UI.Number().onChange( update );
+	// 
+	// objectNearRow.add( new UI.Text( 'Near' ).setWidth( '90px' ) );
+	// objectNearRow.add( objectNear );
+	// 
+	// container.add( objectNearRow );
 
-	objectNearRow.add( new UI.Text( 'Near' ).setWidth( '90px' ) );
-	objectNearRow.add( objectNear );
-
+	var objectNearRow	= new UI.NumberRow().setLabel('Near').onChange(update)
 	container.add( objectNearRow );
 
 	// far
 
-	var objectFarRow = new UI.Panel();
-	var objectFar = new UI.Number().onChange( update );
+	// var objectFarRow = new UI.Panel();
+	// var objectFar = new UI.Number().onChange( update );
+	// 
+	// objectFarRow.add( new UI.Text( 'Far' ).setWidth( '90px' ) );
+	// objectFarRow.add( objectFar );
+	// 
+	// container.add( objectFarRow );
 
-	objectFarRow.add( new UI.Text( 'Far' ).setWidth( '90px' ) );
-	objectFarRow.add( objectFar );
-
+	var objectFarRow	= new UI.NumberRow().setLabel('Far').onChange(update)
 	container.add( objectFarRow );
 
 	// intensity
@@ -280,11 +279,7 @@ Sidebar.Object3D = function ( editor ) {
 			}
 			
 			objectPositionRow.update(object.position)
-
-			object.rotation.x = objectRotationX.getValue();
-			object.rotation.y = objectRotationY.getValue();
-			object.rotation.z = objectRotationZ.getValue();
-
+			objectRotationRow.update(object.rotation)
 			objectScaleRow.update(object.scale)
 
 			if ( object.fov !== undefined ) {
@@ -294,17 +289,8 @@ Sidebar.Object3D = function ( editor ) {
 
 			}
 
-			if ( object.near !== undefined ) {
-
-				object.near = objectNear.getValue();
-
-			}
-
-			if ( object.far !== undefined ) {
-
-				object.far = objectFar.getValue();
-
-			}
+			objectNearRow.update(object, 'near')
+			objectFarRow.update(object, 'far')
 
 			if ( object.intensity !== undefined ) {
 
@@ -371,8 +357,8 @@ Sidebar.Object3D = function ( editor ) {
 		var properties = {
 			'parent': objectParentRow,
 			// 'fov': objectFovRow,
-			'near': objectNearRow,
-			'far': objectFarRow,
+			// 'near': objectNearRow,
+			// 'far': objectFarRow,
 			'intensity': objectIntensityRow,
 			'color': objectColorRow,
 			'groundColor': objectGroundColorRow,
@@ -463,26 +449,12 @@ Sidebar.Object3D = function ( editor ) {
 		}
 		
 		objectPositionRow.updateUI( object.position )
-
-		objectRotationX.setValue( object.rotation.x )
-		objectRotationY.setValue( object.rotation.y )
-		objectRotationZ.setValue( object.rotation.z )
-
+		objectRotationRow.updateUI( object.rotation )
 		objectScaleRow.updateUI( object.scale )
 
 		objectFovRow.updateUI( object.fov );
-
-		if ( object.near !== undefined ) {
-
-			objectNear.setValue( object.near );
-
-		}
-
-		if ( object.far !== undefined ) {
-
-			objectFar.setValue( object.far );
-
-		}
+		objectNearRow.updateUI( object.near );
+		objectFarRow.updateUI( object.far );
 
 		if ( object.intensity !== undefined ) {
 
