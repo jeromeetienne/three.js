@@ -131,78 +131,37 @@ Sidebar.Object3D = function ( editor ) {
 
 	// near
 
-	// var objectNearRow = new UI.Panel();
-	// var objectNear = new UI.Number().onChange( update );
-	// 
-	// objectNearRow.add( new UI.Text( 'Near' ).setWidth( '90px' ) );
-	// objectNearRow.add( objectNear );
-	// 
-	// container.add( objectNearRow );
-
 	var objectNearRow	= new UI.NumberRow().setLabel('Near').onChange(update)
 	container.add( objectNearRow );
 
 	// far
-
-	// var objectFarRow = new UI.Panel();
-	// var objectFar = new UI.Number().onChange( update );
-	// 
-	// objectFarRow.add( new UI.Text( 'Far' ).setWidth( '90px' ) );
-	// objectFarRow.add( objectFar );
-	// 
-	// container.add( objectFarRow );
 
 	var objectFarRow	= new UI.NumberRow().setLabel('Far').onChange(update)
 	container.add( objectFarRow );
 
 	// intensity
 
-	var objectIntensityRow = new UI.Panel();
-	var objectIntensity = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectIntensityRow.add( new UI.Text( 'Intensity' ).setWidth( '90px' ) );
-	objectIntensityRow.add( objectIntensity );
-
+	var objectIntensityRow	= new UI.NumberRow().setLabel('Intensity').onChange(update)
 	container.add( objectIntensityRow );
 
 	// color
 
-	var objectColorRow = new UI.Panel();
-	var objectColor = new UI.Color().onChange( update );
-
-	objectColorRow.add( new UI.Text( 'Color' ).setWidth( '90px' ) );
-	objectColorRow.add( objectColor );
-
-	container.add( objectColorRow );
+	var objectColorRow = new UI.ColorRow().setLabel('Color').onChange( update )
+	container.add( objectColorRow )
 
 	// ground color
 
-	var objectGroundColorRow = new UI.Panel();
-	var objectGroundColor = new UI.Color().onChange( update );
-
-	objectGroundColorRow.add( new UI.Text( 'Ground color' ).setWidth( '90px' ) );
-	objectGroundColorRow.add( objectGroundColor );
-
-	container.add( objectGroundColorRow );
+	var objectGroundColorRow = new UI.ColorRow().setLabel('Ground Color').onChange( update )
+	container.add( objectGroundColorRow )
 
 	// distance
 
-	var objectDistanceRow = new UI.Panel();
-	var objectDistance = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectDistanceRow.add( new UI.Text( 'Distance' ).setWidth( '90px' ) );
-	objectDistanceRow.add( objectDistance );
-
+	var objectDistanceRow	= new UI.NumberRow().setLabel('Distance').onChange(update)
 	container.add( objectDistanceRow );
 
 	// angle
 
-	var objectAngleRow = new UI.Panel();
-	var objectAngle = new UI.Number().setPrecision( 3 ).setRange( 0, Math.PI / 2 ).onChange( update );
-
-	objectAngleRow.add( new UI.Text( 'Angle' ).setWidth( '90px' ) );
-	objectAngleRow.add( objectAngle );
-
+	var objectAngleRow	= new UI.NumberRow().setLabel('Angle').onChange(update)
 	container.add( objectAngleRow );
 
 	// exponent
@@ -292,35 +251,22 @@ Sidebar.Object3D = function ( editor ) {
 			objectNearRow.update(object, 'near')
 			objectFarRow.update(object, 'far')
 
-			if ( object.intensity !== undefined ) {
+			objectIntensityRow.update(object, 'intensity')
 
-				object.intensity = objectIntensity.getValue();
+			if( object.color !== undefined ){
 
-			}
-
-			if ( object.color !== undefined ) {
-
-				object.color.setHex( objectColor.getHexValue() );
+				object.color.setHex( objectColorRow.getHexValue() )
 
 			}
 
 			if ( object.groundColor !== undefined ) {
 
-				object.groundColor.setHex( objectGroundColor.getHexValue() );
+				object.groundColor.setHex( objectGroundColorRow.getHexValue() )
 
 			}
 
-			if ( object.distance !== undefined ) {
-
-				object.distance = objectDistance.getValue();
-
-			}
-
-			if ( object.angle !== undefined ) {
-
-				object.angle = objectAngle.getValue();
-
-			}
+			objectDistanceRow.update(object, 'distance')
+			objectAngleRow.update(object, 'angle')
 
 			if ( object.exponent !== undefined ) {
 
@@ -359,11 +305,11 @@ Sidebar.Object3D = function ( editor ) {
 			// 'fov': objectFovRow,
 			// 'near': objectNearRow,
 			// 'far': objectFarRow,
-			'intensity': objectIntensityRow,
-			'color': objectColorRow,
-			'groundColor': objectGroundColorRow,
-			'distance' : objectDistanceRow,
-			'angle' : objectAngleRow,
+			// 'intensity': objectIntensityRow,
+			// 'color': objectColorRow,
+			// 'groundColor': objectGroundColorRow,
+			// 'distance' : objectDistanceRow,
+			// 'angle' : objectAngleRow,
 			'exponent' : objectExponentRow,
 			'decay' : objectDecayRow
 		};
@@ -456,35 +402,22 @@ Sidebar.Object3D = function ( editor ) {
 		objectNearRow.updateUI( object.near );
 		objectFarRow.updateUI( object.far );
 
-		if ( object.intensity !== undefined ) {
+		objectIntensityRow.updateUI( object.intensity );
+		
+		if( object.color !== undefined ){
 
-			objectIntensity.setValue( object.intensity );
+			objectColorRow.updateUI(object.color.getHex())
+	
+		}
+		
+		if( object.groundColor !== undefined ){
+			
+			objectGroundColorRow.updateUI(object.groundColor.getHex())
 
 		}
 
-		if ( object.color !== undefined ) {
-
-			objectColor.setHexValue( object.color.getHexString() );
-
-		}
-
-		if ( object.groundColor !== undefined ) {
-
-			objectGroundColor.setHexValue( object.groundColor.getHexString() );
-
-		}
-
-		if ( object.distance !== undefined ) {
-
-			objectDistance.setValue( object.distance );
-
-		}
-
-		if ( object.angle !== undefined ) {
-
-			objectAngle.setValue( object.angle );
-
-		}
+		objectDistanceRow.updateUI( object.distance );
+		objectAngleRow.updateUI( object.angle );
 
 		if ( object.exponent !== undefined ) {
 
