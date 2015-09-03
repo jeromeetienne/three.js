@@ -1,0 +1,11 @@
+### Notes about the transition to three.js r71
+- we got a pull request for three.js r71
+- lets fix conflicts with master if any
+- once merge we can start working on binary models
+- to use the three.js format json+binary
+  - PRO it is standard three.js format
+  - PRO will reduce the bandwidth (estimated to -30%)
+  - PRO will reduce the ram needed when parsing (so lot less garbarge collection)
+  - reduce tab crash due to ram
+- there is early work in branch XXXX
+  - TODO where is the branch for that
