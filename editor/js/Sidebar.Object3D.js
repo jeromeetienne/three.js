@@ -166,22 +166,12 @@ Sidebar.Object3D = function ( editor ) {
 
 	// exponent
 
-	var objectExponentRow = new UI.Panel();
-	var objectExponent = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectExponentRow.add( new UI.Text( 'Exponent' ).setWidth( '90px' ) );
-	objectExponentRow.add( objectExponent );
-
+	var objectExponentRow	= new UI.NumberRow().setLabel('Exponent').onChange(update)
 	container.add( objectExponentRow );
 
 	// decay
 
-	var objectDecayRow = new UI.Panel();
-	var objectDecay = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectDecayRow.add( new UI.Text( 'Decay' ).setWidth( '90px' ) );
-	objectDecayRow.add( objectDecay );
-
+	var objectDecayRow	= new UI.NumberRow().setLabel('Decay').onChange(update)
 	container.add( objectDecayRow );
 
 	// visible
@@ -241,9 +231,10 @@ Sidebar.Object3D = function ( editor ) {
 			objectRotationRow.update(object.rotation)
 			objectScaleRow.update(object.scale)
 
+			objectFovRow.update(object, 'fov')
+
 			if ( object.fov !== undefined ) {
 
-				objectFovRow.update(object, 'fov')
 				object.updateProjectionMatrix();
 
 			}
@@ -267,18 +258,8 @@ Sidebar.Object3D = function ( editor ) {
 
 			objectDistanceRow.update(object, 'distance')
 			objectAngleRow.update(object, 'angle')
-
-			if ( object.exponent !== undefined ) {
-
-				object.exponent = objectExponent.getValue(); 
-
-			}
-
-			if ( object.decay !== undefined ) {
-
-				object.decay = objectDecay.getValue();
-
-			}
+			objectExponentRow.update(object, 'exponent')
+			objectDecayRow.update(object, 'decay')
 
 			objectVisibleRow.update(object, 'visible')
 
@@ -310,8 +291,8 @@ Sidebar.Object3D = function ( editor ) {
 			// 'groundColor': objectGroundColorRow,
 			// 'distance' : objectDistanceRow,
 			// 'angle' : objectAngleRow,
-			'exponent' : objectExponentRow,
-			'decay' : objectDecayRow
+			// 'exponent' : objectExponentRow,
+			// 'decay' : objectDecayRow
 		};
 
 		for ( var property in properties ) {
@@ -418,18 +399,8 @@ Sidebar.Object3D = function ( editor ) {
 
 		objectDistanceRow.updateUI( object.distance );
 		objectAngleRow.updateUI( object.angle );
-
-		if ( object.exponent !== undefined ) {
-
-			objectExponent.setValue( object.exponent );
-
-		}
-
-		if ( object.decay !== undefined ) {
-
-			objectDecay.setValue( object.decay );
-
-		}
+		objectExponentRow.updateUI( object.exponent );
+		objectDecayRow.updateUI( object.decay );
 
 		objectVisibleRow.updateUI( object.visible );
 
