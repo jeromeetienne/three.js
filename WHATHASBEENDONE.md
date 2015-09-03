@@ -1,0 +1,13 @@
+- Moved to a new folder hierachy, copied from three.js one.
+- removed 300+ references to $scope in the source
+- some reference to angular remains tho
+  - it is usually hardcoded callbacks.
+  - aka 4D Studio functions called directly from four.js
+  - it is fixable by splitting those files into 2 files: one for 4D Studio, one for four.js
+  - there are 3 occurences
+    - TODO put the list here
+  - estimation: one or two days
+- later tasks:
+  - remove code duplication and unify the code between mobile and 4d studio e.g. 2 viewers atm
+  - write automatized tests
+  - generate api documentation with jsdoc
