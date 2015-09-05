@@ -283,16 +283,6 @@ Sidebar.Object3D = function ( editor ) {
 
 		var properties = {
 			'parent': objectParentRow,
-			// 'fov': objectFovRow,
-			// 'near': objectNearRow,
-			// 'far': objectFarRow,
-			// 'intensity': objectIntensityRow,
-			// 'color': objectColorRow,
-			// 'groundColor': objectGroundColorRow,
-			// 'distance' : objectDistanceRow,
-			// 'angle' : objectAngleRow,
-			// 'exponent' : objectExponentRow,
-			// 'decay' : objectDecayRow
 		};
 
 		for ( var property in properties ) {
