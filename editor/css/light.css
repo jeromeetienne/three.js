@@ -157,6 +157,7 @@ input.Number {
 	}
 
 #leftSidebar {
+	z-index: -1;
 	position: absolute;
 	left: 0px;
 	top: 32px;
