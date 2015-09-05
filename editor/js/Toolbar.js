@@ -23,12 +23,14 @@ var Toolbar = function ( editor ) {
 
 			 document.querySelector('#leftSidebar').style.display = 'none'
 			 document.querySelector('#viewport').style.left = '0px'
+			 document.querySelector('#player').style.left = '0px'
 			 document.querySelector('#toolbar').style.left = '0px'
 			 toggleLeftSidebar.setLabel('>>')
 		}else{
 
 			 document.querySelector('#leftSidebar').style.display = ''
 			 document.querySelector('#viewport').style.left = '300px'
+			 document.querySelector('#player').style.left = '300px'
 			 document.querySelector('#toolbar').style.left = '300px'			
 			 toggleLeftSidebar.setLabel('<<')
 
@@ -50,12 +52,14 @@ var Toolbar = function ( editor ) {
 
 			 document.querySelector('#sidebar').style.display = 'none'
 			 document.querySelector('#viewport').style.right = '0px'
+			 document.querySelector('#player').style.right = '0px'
 			 document.querySelector('#toolbar').style.right = '0px'
 			 toggleRightSidebar.setLabel('<<')
 		}else{
 
 			 document.querySelector('#sidebar').style.display = ''
 			 document.querySelector('#viewport').style.right = '300px'
+			 document.querySelector('#player').style.right = '300px'
 			 document.querySelector('#toolbar').style.right = '300px'			
 			 toggleRightSidebar.setLabel('>>')
 
