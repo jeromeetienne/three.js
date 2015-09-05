@@ -16,9 +16,9 @@ var Sidebar = function ( editor ) {
 	// container.add( new Sidebar.Script( editor ) );
 // return container
 
-
-	container.add( new Sidebar.Project( editor ) );
-	container.add( new Sidebar.Scene( editor ) );
+	// 
+	// container.add( new Sidebar.Project( editor ) );
+	// container.add( new Sidebar.Scene( editor ) );
 
 	var tabContainer	= new UI.TabsHelper.createTabContainer('object3dTabs', 0).setPadding('0px')
 	container.add(tabContainer)
