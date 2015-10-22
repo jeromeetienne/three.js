@@ -15,13 +15,13 @@ var Player = function ( editor ) {
 
 	var player = new APP.Player();
 
-	window.addEventListener( 'resize', function () {
+	signals.windowResize.add( function () {
 
 		if ( player.dom === undefined ) return;
 
 		player.setSize( container.dom.clientWidth, container.dom.clientHeight );
 
-	} );
+	})
 
 	signals.startPlayer.add( function () {
 

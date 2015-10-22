@@ -32,7 +32,7 @@ input.Number {
 #viewport {
 	position: absolute;
 	top: 32px;
-	left: 0px;
+	left: 300px;
 	right: 300px;
 	bottom: 32px;
 }
@@ -53,7 +53,7 @@ input.Number {
 #player {
 	position: absolute;
 	top: 32px;
-	left: 0px;
+	left: 300px;
 	right: 300px;
 	bottom: 32px;
 }
@@ -156,9 +156,45 @@ input.Number {
 		border-top: 1px solid #ccc;
 	}
 
-#toolbar {
+#leftSidebar {
+	z-index: -1;
 	position: absolute;
 	left: 0px;
+	top: 32px;
+	bottom: 0px;
+	width: 300px;
+	background: #eee;
+	overflow: auto;
+}
+
+	#leftSidebar * {
+		vertical-align: middle;
+	}
+
+	#leftSidebar input,
+	#leftSidebar textarea,
+	#leftSidebar select {
+		border: 1px solid transparent;
+		color: #444;
+	}
+
+	#leftSidebar .Panel {
+		margin-bottom: 10px;
+	}
+
+	#leftSidebar .Panel.collapsed {
+		margin-bottom: 0px;
+	}
+
+	#leftSidebar > .Panel {
+		color: #888;
+		padding: 10px;
+		border-top: 1px solid #ccc;
+	}
+
+#toolbar {
+	position: absolute;
+	left: 300px;
 	right: 300px;
 	bottom: 0px;
 	height: 32px;

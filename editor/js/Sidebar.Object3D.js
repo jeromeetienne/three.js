@@ -112,14 +112,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	// rotation
 
-	var objectRotationRow = new UI.Panel();
-	var objectRotationX = new UI.Number().setWidth( '50px' ).onChange( update );
-	var objectRotationY = new UI.Number().setWidth( '50px' ).onChange( update );
-	var objectRotationZ = new UI.Number().setWidth( '50px' ).onChange( update );
-
-	objectRotationRow.add( new UI.Text( 'Rotation' ).setWidth( '90px' ) );
-	objectRotationRow.add( objectRotationX, objectRotationY, objectRotationZ );
-
+	var objectRotationRow = new UI.Vector3Row().setLabel('Rotation').onChange( update );
 	container.add( objectRotationRow );
 
 	// scale
@@ -138,92 +131,47 @@ Sidebar.Object3D = function ( editor ) {
 
 	// near
 
-	var objectNearRow = new UI.Panel();
-	var objectNear = new UI.Number().onChange( update );
-
-	objectNearRow.add( new UI.Text( 'Near' ).setWidth( '90px' ) );
-	objectNearRow.add( objectNear );
-
+	var objectNearRow	= new UI.NumberRow().setLabel('Near').onChange(update)
 	container.add( objectNearRow );
 
 	// far
 
-	var objectFarRow = new UI.Panel();
-	var objectFar = new UI.Number().onChange( update );
-
-	objectFarRow.add( new UI.Text( 'Far' ).setWidth( '90px' ) );
-	objectFarRow.add( objectFar );
-
+	var objectFarRow	= new UI.NumberRow().setLabel('Far').onChange(update)
 	container.add( objectFarRow );
 
 	// intensity
 
-	var objectIntensityRow = new UI.Panel();
-	var objectIntensity = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectIntensityRow.add( new UI.Text( 'Intensity' ).setWidth( '90px' ) );
-	objectIntensityRow.add( objectIntensity );
-
+	var objectIntensityRow	= new UI.NumberRow().setLabel('Intensity').onChange(update)
 	container.add( objectIntensityRow );
 
 	// color
 
-	var objectColorRow = new UI.Panel();
-	var objectColor = new UI.Color().onChange( update );
-
-	objectColorRow.add( new UI.Text( 'Color' ).setWidth( '90px' ) );
-	objectColorRow.add( objectColor );
-
-	container.add( objectColorRow );
+	var objectColorRow = new UI.ColorRow().setLabel('Color').onChange( update )
+	container.add( objectColorRow )
 
 	// ground color
 
-	var objectGroundColorRow = new UI.Panel();
-	var objectGroundColor = new UI.Color().onChange( update );
-
-	objectGroundColorRow.add( new UI.Text( 'Ground color' ).setWidth( '90px' ) );
-	objectGroundColorRow.add( objectGroundColor );
-
-	container.add( objectGroundColorRow );
+	var objectGroundColorRow = new UI.ColorRow().setLabel('Ground Color').onChange( update )
+	container.add( objectGroundColorRow )
 
 	// distance
 
-	var objectDistanceRow = new UI.Panel();
-	var objectDistance = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectDistanceRow.add( new UI.Text( 'Distance' ).setWidth( '90px' ) );
-	objectDistanceRow.add( objectDistance );
-
+	var objectDistanceRow	= new UI.NumberRow().setLabel('Distance').onChange(update)
 	container.add( objectDistanceRow );
 
 	// angle
 
-	var objectAngleRow = new UI.Panel();
-	var objectAngle = new UI.Number().setPrecision( 3 ).setRange( 0, Math.PI / 2 ).onChange( update );
-
-	objectAngleRow.add( new UI.Text( 'Angle' ).setWidth( '90px' ) );
-	objectAngleRow.add( objectAngle );
-
+	var objectAngleRow	= new UI.NumberRow().setLabel('Angle').onChange(update)
 	container.add( objectAngleRow );
 
 	// exponent
 
-	var objectExponentRow = new UI.Panel();
-	var objectExponent = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectExponentRow.add( new UI.Text( 'Exponent' ).setWidth( '90px' ) );
-	objectExponentRow.add( objectExponent );
-
+	var objectExponentRow	= new UI.NumberRow().setLabel('Exponent').onChange(update)
 	container.add( objectExponentRow );
 
 	// decay
 
-	var objectDecayRow = new UI.Panel();
-	var objectDecay = new UI.Number().setRange( 0, Infinity ).onChange( update );
-
-	objectDecayRow.add( new UI.Text( 'Decay' ).setWidth( '90px' ) );
-	objectDecayRow.add( objectDecay );
-
+	var objectDecayRow	= new UI.NumberRow().setLabel('Decay').onChange(update)
 	container.add( objectDecayRow );
 
 	// visible
@@ -280,73 +228,38 @@ Sidebar.Object3D = function ( editor ) {
 			}
 			
 			objectPositionRow.update(object.position)
-
-			object.rotation.x = objectRotationX.getValue();
-			object.rotation.y = objectRotationY.getValue();
-			object.rotation.z = objectRotationZ.getValue();
-
+			objectRotationRow.update(object.rotation)
 			objectScaleRow.update(object.scale)
+
+			objectFovRow.update(object, 'fov')
 
 			if ( object.fov !== undefined ) {
 
-				objectFovRow.update(object, 'fov')
 				object.updateProjectionMatrix();
 
 			}
 
-			if ( object.near !== undefined ) {
+			objectNearRow.update(object, 'near')
+			objectFarRow.update(object, 'far')
 
-				object.near = objectNear.getValue();
+			objectIntensityRow.update(object, 'intensity')
 
-			}
+			if( object.color !== undefined ){
 
-			if ( object.far !== undefined ) {
-
-				object.far = objectFar.getValue();
-
-			}
-
-			if ( object.intensity !== undefined ) {
-
-				object.intensity = objectIntensity.getValue();
-
-			}
-
-			if ( object.color !== undefined ) {
-
-				object.color.setHex( objectColor.getHexValue() );
+				object.color.setHex( objectColorRow.getHexValue() )
 
 			}
 
 			if ( object.groundColor !== undefined ) {
 
-				object.groundColor.setHex( objectGroundColor.getHexValue() );
+				object.groundColor.setHex( objectGroundColorRow.getHexValue() )
 
 			}
 
-			if ( object.distance !== undefined ) {
-
-				object.distance = objectDistance.getValue();
-
-			}
-
-			if ( object.angle !== undefined ) {
-
-				object.angle = objectAngle.getValue();
-
-			}
-
-			if ( object.exponent !== undefined ) {
-
-				object.exponent = objectExponent.getValue(); 
-
-			}
-
-			if ( object.decay !== undefined ) {
-
-				object.decay = objectDecay.getValue();
-
-			}
+			objectDistanceRow.update(object, 'distance')
+			objectAngleRow.update(object, 'angle')
+			objectExponentRow.update(object, 'exponent')
+			objectDecayRow.update(object, 'decay')
 
 			objectVisibleRow.update(object, 'visible')
 
@@ -370,16 +283,6 @@ Sidebar.Object3D = function ( editor ) {
 
 		var properties = {
 			'parent': objectParentRow,
-			// 'fov': objectFovRow,
-			'near': objectNearRow,
-			'far': objectFarRow,
-			'intensity': objectIntensityRow,
-			'color': objectColorRow,
-			'groundColor': objectGroundColorRow,
-			'distance' : objectDistanceRow,
-			'angle' : objectAngleRow,
-			'exponent' : objectExponentRow,
-			'decay' : objectDecayRow
 		};
 
 		for ( var property in properties ) {
@@ -463,68 +366,31 @@ Sidebar.Object3D = function ( editor ) {
 		}
 		
 		objectPositionRow.updateUI( object.position )
-
-		objectRotationX.setValue( object.rotation.x )
-		objectRotationY.setValue( object.rotation.y )
-		objectRotationZ.setValue( object.rotation.z )
-
+		objectRotationRow.updateUI( object.rotation )
 		objectScaleRow.updateUI( object.scale )
 
 		objectFovRow.updateUI( object.fov );
+		objectNearRow.updateUI( object.near );
+		objectFarRow.updateUI( object.far );
 
-		if ( object.near !== undefined ) {
+		objectIntensityRow.updateUI( object.intensity );
+		
+		if( object.color !== undefined ){
 
-			objectNear.setValue( object.near );
+			objectColorRow.updateUI(object.color.getHex())
+	
+		}
+		
+		if( object.groundColor !== undefined ){
+			
+			objectGroundColorRow.updateUI(object.groundColor.getHex())
 
 		}
 
-		if ( object.far !== undefined ) {
-
-			objectFar.setValue( object.far );
-
-		}
-
-		if ( object.intensity !== undefined ) {
-
-			objectIntensity.setValue( object.intensity );
-
-		}
-
-		if ( object.color !== undefined ) {
-
-			objectColor.setHexValue( object.color.getHexString() );
-
-		}
-
-		if ( object.groundColor !== undefined ) {
-
-			objectGroundColor.setHexValue( object.groundColor.getHexString() );
-
-		}
-
-		if ( object.distance !== undefined ) {
-
-			objectDistance.setValue( object.distance );
-
-		}
-
-		if ( object.angle !== undefined ) {
-
-			objectAngle.setValue( object.angle );
-
-		}
-
-		if ( object.exponent !== undefined ) {
-
-			objectExponent.setValue( object.exponent );
-
-		}
-
-		if ( object.decay !== undefined ) {
-
-			objectDecay.setValue( object.decay );
-
-		}
+		objectDistanceRow.updateUI( object.distance );
+		objectAngleRow.updateUI( object.angle );
+		objectExponentRow.updateUI( object.exponent );
+		objectDecayRow.updateUI( object.decay );
 
 		objectVisibleRow.updateUI( object.visible );
 

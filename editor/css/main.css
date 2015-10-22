@@ -138,9 +138,47 @@ textarea, input { outline: none; } /* osx */
 /* */
 
 .Material {
-	color: #ff8888;
+	
+	/* conflict with material sidebar color: #ff8888;*/
 }
 
 .MeshPhongMaterial {
 	color: #ffaa88;
+}
+
+.tabContainer {
+	padding: 0px;
+	margin: 0px;
+	height: auto;
+}
+.tabContainer > ul.headers {
+	color: #aaa;
+	margin: 0px;
+	height: 30px;
+	/*border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;*/
+	list-style: none;
+	padding: 0px;
+}
+.tabContainer > ul.headers > li {
+	padding: 7px 7px;
+	display: block;
+	float: left;
+	border-right: 1px solid #ccc;
+}
+.tabContainer > ul.headers > li.disabled {
+	color: #ccc;
+}
+.tabContainer > ul.headers > li.active {
+	background-color: #ccc;
+	color: #888;
+}
+.tabContainer .tabs .tab {
+	display: none;
+}
+.tabContainer .tabs .tab.active {
+	display: inherit;
+}
+.tabContainer .tabs .tab > .Panel {
+	border-top: 1px solid #ccc;
 }

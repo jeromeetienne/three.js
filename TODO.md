@@ -1,10 +1,7 @@
-### Intro
-- it is happening in /editor
-- the ui for the rows are in /editor/js/libs/ui.rows
-- the transformation of the Sidebar.*.js started
 
 ### TODO
 - do one panel with the new rows API
+  - Sidebar.Object3D.js
 - implement the tabs
 - implement the double side bar
 - publish it as gh-pages
@@ -13,3 +10,8 @@
 
 ### Pull request in three.js 
 - Feature: Number fix with meta+shift
+
+### Intro
+- it is happening in /editor
+- the ui for the rows are in /editor/js/libs/ui.rows
+- the transformation of the Sidebar.*.js started
