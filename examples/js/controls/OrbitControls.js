@@ -412,6 +412,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if ( state !== STATE.NONE ) {
 			document.addEventListener( 'mousemove', onMouseMove, false );
 			document.addEventListener( 'mouseup', onMouseUp, false );
+			document.addEventListener( 'mouseout', onMouseUp, false );
 			scope.dispatchEvent( startEvent );
 		}
 
@@ -482,6 +483,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'mouseup', onMouseUp, false );
+		document.removeEventListener( 'mouseout', onMouseUp, false );
 		scope.dispatchEvent( endEvent );
 		state = STATE.NONE;
 
@@ -686,10 +688,35 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
-	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+	function contextmenu( event ) {
+
+		event.preventDefault();
+
+	}
+
+	this.dispose = function() {
+
+		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
+		this.domElement.removeEventListener( 'mousedown', onMouseDown, false );
+		this.domElement.removeEventListener( 'mousewheel', onMouseWheel, false );
+		this.domElement.removeEventListener( 'MozMousePixelScroll', onMouseWheel, false ); // firefox
+
+		this.domElement.removeEventListener( 'touchstart', touchstart, false );
+		this.domElement.removeEventListener( 'touchend', touchend, false );
+		this.domElement.removeEventListener( 'touchmove', touchmove, false );
+
+		document.removeEventListener( 'mousemove', onMouseMove, false );
+		document.removeEventListener( 'mouseup', onMouseUp, false );
+		document.removeEventListener( 'mouseout', onMouseUp, false );
+
+		window.removeEventListener( 'keydown', onKeyDown, false );
+
+	}
+
+	this.domElement.addEventListener( 'contextmenu', contextmenu, false );
 	this.domElement.addEventListener( 'mousedown', onMouseDown, false );
 	this.domElement.addEventListener( 'mousewheel', onMouseWheel, false );
-	this.domElement.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
+	this.domElement.addEventListener( 'MozMousePixelScroll', onMouseWheel, false ); // firefox
 
 	this.domElement.addEventListener( 'touchstart', touchstart, false );
 	this.domElement.addEventListener( 'touchend', touchend, false );

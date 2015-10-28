@@ -8,6 +8,7 @@ var LeftSidebar = function ( editor ) {
 	container.setId( 'leftSidebar' );
 
 	container.add( new Sidebar.Project( editor ) );
+	container.add( new Sidebar.History( editor ) );
 	container.add( new Sidebar.Scene( editor ) );
 	
 	return container;

@@ -25,6 +25,7 @@ Sidebar.Geometry = function ( editor ) {
 
 		'Actions': 'Actions',
 		'Center': 'Center',
+		'Convert': 'Convert',
 		'Flatten': 'Flatten'
 
 	} );
@@ -48,31 +49,42 @@ Sidebar.Geometry = function ( editor ) {
 
 				var offset = geometry.center();
 
-				object.position.sub( offset );
+				var newPosition = object.position.clone();
+				newPosition.sub( offset );
+				editor.execute( new SetPositionCommand( object, newPosition ) );
 
-				editor.signals.geometryChanged.dispatch( geometry );
-				editor.signals.objectChanged.dispatch( object );
+				editor.signals.geometryChanged.dispatch( object );
+
+				break;
+
+			case 'Convert':
+
+				if ( geometry instanceof THREE.Geometry ) {
+
+					editor.execute( new SetGeometryCommand( object, new THREE.BufferGeometry().fromGeometry( geometry ) ) );
+
+				}
 
 				break;
 
 			case 'Flatten':
 
-				geometry.applyMatrix( object.matrix );
+				var newGeometry = geometry.clone();
+				newGeometry.uuid = geometry.uuid;
+				newGeometry.applyMatrix( object.matrix );
 
-				object.position.set( 0, 0, 0 );
-				object.rotation.set( 0, 0, 0 );
-				object.scale.set( 1, 1, 1 );
+				var cmds = [ new SetGeometryCommand( object, newGeometry ),
+					new SetPositionCommand( object, new THREE.Vector3( 0, 0, 0 ) ),
+					new SetRotationCommand( object, new THREE.Euler( 0, 0, 0 ) ),
+					new SetScaleCommand( object, new THREE.Vector3( 1, 1, 1 ) ) ];
 
-				editor.signals.geometryChanged.dispatch( geometry );
-				editor.signals.objectChanged.dispatch( object );
+				editor.execute( new MultiCmdsCommand( cmds ), 'Flatten Geometry' );
 
 				break;
 
 		}
 
 		this.setValue( 'Actions' );
-
-		signals.objectChanged.dispatch( object );
 
 	} );
 	container.addStatic( objectActions );
@@ -87,7 +99,7 @@ Sidebar.Geometry = function ( editor ) {
 
 		geometryUUID.setValue( THREE.Math.generateUUID() );
 
-		editor.selected.geometry.uuid = geometryUUID.getValue();
+		editor.execute( new SetGeometryValueCommand( editor.selected, 'uuid', geometryUUID.getValue() ) );
 
 	} );
 
@@ -102,7 +114,7 @@ Sidebar.Geometry = function ( editor ) {
 	var geometryNameRow = new UI.Panel();
 	var geometryName = new UI.Input().setWidth( '150px' ).setFontSize( '12px' ).onChange( function () {
 
-		editor.setGeometryName( editor.selected.geometry, geometryName.getValue() );
+		editor.execute( new SetGeometryValueCommand( editor.selected, 'name', geometryName.getValue() ) );
 
 	} );
 
@@ -113,11 +125,11 @@ Sidebar.Geometry = function ( editor ) {
 
 	// geometry
 
-	container.add( new Sidebar.Geometry.Geometry( signals ) );
+	container.add( new Sidebar.Geometry.Geometry( editor ) );
 
 	// buffergeometry
 
-	container.add( new Sidebar.Geometry.BufferGeometry( signals ) );
+	container.add( new Sidebar.Geometry.BufferGeometry( editor ) );
 
 	// parameters
 
@@ -146,41 +158,15 @@ Sidebar.Geometry = function ( editor ) {
 
 			parameters.clear();
 
-			if ( geometry instanceof THREE.BoxGeometry ) {
+			if ( geometry.type === 'BufferGeometry' || geometry.type === 'Geometry' ) {
 
-				parameters.add( new Sidebar.Geometry.BoxGeometry( signals, object ) );
+				parameters.add( new Sidebar.Geometry.Modifiers( editor, object ) );
 
-			} else if ( geometry instanceof THREE.CircleGeometry ) {
+			} else if ( Sidebar.Geometry[ geometry.type ] !== undefined ) {
 
-				parameters.add( new Sidebar.Geometry.CircleGeometry( signals, object ) );
-
-			} else if ( geometry instanceof THREE.CylinderGeometry ) {
-
-				parameters.add( new Sidebar.Geometry.CylinderGeometry( signals, object ) );
-
-			} else if ( geometry instanceof THREE.SphereGeometry ) {
-
-				parameters.add( new Sidebar.Geometry.SphereGeometry( signals, object ) );
-
-			} else if ( geometry instanceof THREE.IcosahedronGeometry ) {
-
-				parameters.add( new Sidebar.Geometry.IcosahedronGeometry( signals, object ) );
-
-			} else if ( geometry instanceof THREE.PlaneGeometry ) {
-
-				parameters.add( new Sidebar.Geometry.PlaneGeometry( signals, object ) );
-
-			} else if ( geometry instanceof THREE.TorusGeometry ) {
-
-				parameters.add( new Sidebar.Geometry.TorusGeometry( signals, object ) );
-
-			} else if ( geometry instanceof THREE.TorusKnotGeometry ) {
-
-				parameters.add( new Sidebar.Geometry.TorusKnotGeometry( signals, object ) );
+				parameters.add( new Sidebar.Geometry[ geometry.type ]( editor, object ) );
 
 			}
-
-			parameters.add( new Sidebar.Geometry.Modifiers( signals, object ) );
 
 		} else {
 

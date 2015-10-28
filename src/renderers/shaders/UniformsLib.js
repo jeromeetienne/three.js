@@ -12,20 +12,37 @@ THREE.UniformsLib = {
 		"map" : { type: "t", value: null },
 		"offsetRepeat" : { type: "v4", value: new THREE.Vector4( 0, 0, 1, 1 ) },
 
-		"lightMap" : { type: "t", value: null },
 		"specularMap" : { type: "t", value: null },
 		"alphaMap" : { type: "t", value: null },
 
 		"envMap" : { type: "t", value: null },
 		"flipEnvMap" : { type: "f", value: - 1 },
 		"reflectivity" : { type: "f", value: 1.0 },
-		"refractionRatio" : { type: "f", value: 0.98 },
-
-		"morphTargetInfluences" : { type: "f", value: 0 }
+		"refractionRatio" : { type: "f", value: 0.98 }
 
 	},
 
-	bump: {
+	aomap: {
+
+		"aoMap" : { type: "t", value: null },
+		"aoMapIntensity" : { type: "f", value: 1 },
+
+	},
+
+	lightmap: {
+
+		"lightMap" : { type: "t", value: null },
+		"lightMapIntensity" : { type: "f", value: 1 },
+
+	},
+
+	emissivemap: {
+
+		"emissiveMap" : { type: "t", value: null },
+
+	},
+
+	bumpmap: {
 
 		"bumpMap" : { type: "t", value: null },
 		"bumpScale" : { type: "f", value: 1 }
@@ -36,6 +53,33 @@ THREE.UniformsLib = {
 
 		"normalMap" : { type: "t", value: null },
 		"normalScale" : { type: "v2", value: new THREE.Vector2( 1, 1 ) }
+
+	},
+
+	displacementmap: {
+
+		"displacementMap" : { type: "t", value: null },
+		"displacementScale" : { type: "f", value: 1 },
+		"displacementBias" : { type: "f", value: 0 }
+
+	},
+
+	roughnessmap: {
+
+		"roughnessMap" : { type: "t", value: null }
+
+	},
+
+	reflectivitymap: {
+
+		"reflectivityMap" : { type: "t", value: null }
+
+	},
+
+	metalnessmap: {
+
+		"metalnessMap" : { type: "t", value: null }
+
 	},
 
 	fog : {
@@ -51,29 +95,38 @@ THREE.UniformsLib = {
 
 		"ambientLightColor" : { type: "fv", value: [] },
 
-		"directionalLightDirection" : { type: "fv", value: [] },
-		"directionalLightColor" : { type: "fv", value: [] },
+		"directionalLights" : { type: "sa", value: [], properties: {
+			"direction": { type: "v3" },
+			"color": { type: "c" }
+		} },
 
-		"hemisphereLightDirection" : { type: "fv", value: [] },
-		"hemisphereLightSkyColor" : { type: "fv", value: [] },
-		"hemisphereLightGroundColor" : { type: "fv", value: [] },
+		"hemisphereLights" : { type: "sa", value: [], properties: {
+			"direction": { type: "v3" },
+			"skyColor": { type: "c" },
+			"groundColor": { type: "c" }
+		} },
 
-		"pointLightColor" : { type: "fv", value: [] },
-		"pointLightPosition" : { type: "fv", value: [] },
-		"pointLightDistance" : { type: "fv1", value: [] },
-		"pointLightDecay" : { type: "fv1", value: [] },
+		"pointLights" : { type: "sa", value: [], properties: {
+			"color": { type: "c" },
+			"position": { type: "v3" },
+			"decay": { type: "f" },
+			"distance": { type: "f" }
+		} },
 
-		"spotLightColor" : { type: "fv", value: [] },
-		"spotLightPosition" : { type: "fv", value: [] },
-		"spotLightDirection" : { type: "fv", value: [] },
-		"spotLightDistance" : { type: "fv1", value: [] },
-		"spotLightAngleCos" : { type: "fv1", value: [] },
-		"spotLightExponent" : { type: "fv1", value: [] },
-		"spotLightDecay" : { type: "fv1", value: [] }
+		"spotLights" : { type: "sa", value: [], properties: {
+			"color": { type: "c" },
+			"position": { type: "v3" },
+			"direction": { type: "v3" },
+			"distance": { type: "f" },
+			"angleCos": { type: "f" },
+			"exponent": { type: "f" },
+			"decay": { type: "f" }
+		} }
+
 
 	},
 
-	particle: {
+	points: {
 
 		"psColor" : { type: "c", value: new THREE.Color( 0xeeeeee ) },
 		"opacity" : { type: "f", value: 1.0 },

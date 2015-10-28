@@ -4,7 +4,6 @@ var list = {
 		"Introduction": [
 			[ "Creating a scene", "manual/introduction/Creating-a-scene" ],
 			[ "Matrix transformations", "manual/introduction/Matrix-transformations" ]
-
 		]
 	},
 
@@ -32,12 +31,11 @@ var list = {
 			[ "Face3", "api/core/Face3" ],
 			[ "Geometry", "api/core/Geometry" ],
 			[ "Object3D", "api/core/Object3D" ],
-			[ "Raycaster", "api/core/Raycaster" ],
+			[ "Raycaster", "api/core/Raycaster" ]
 		],
 
 		"Lights": [
 			[ "AmbientLight", "api/lights/AmbientLight" ],
-			[ "AreaLight", "api/lights/AreaLight" ],
 			[ "DirectionalLight", "api/lights/DirectionalLight" ],
 			[ "HemisphereLight", "api/lights/HemisphereLight" ],
 			[ "Light", "api/lights/Light" ],
@@ -78,10 +76,9 @@ var list = {
 			[ "MeshLambertMaterial", "api/materials/MeshLambertMaterial" ],
 			[ "MeshNormalMaterial", "api/materials/MeshNormalMaterial" ],
 			[ "MeshPhongMaterial", "api/materials/MeshPhongMaterial" ],
-			[ "PointCloudMaterial", "api/materials/PointCloudMaterial" ],
+			[ "PointsMaterial", "api/materials/PointsMaterial" ],
 			[ "RawShaderMaterial", "api/materials/RawShaderMaterial" ],
 			[ "ShaderMaterial", "api/materials/ShaderMaterial" ],
-			[ "SpriteCanvasMaterial", "api/materials/SpriteCanvasMaterial" ],
 			[ "SpriteMaterial", "api/materials/SpriteMaterial" ]
 		],
 
@@ -110,11 +107,13 @@ var list = {
 			[ "Bone", "api/objects/Bone" ],
 			[ "LensFlare", "api/objects/LensFlare" ],
 			[ "Line", "api/objects/Line" ],
+			[ "LineSegments", "api/objects/LineSegments" ],
 			[ "LOD", "api/objects/LOD" ],
 			[ "Mesh", "api/objects/Mesh" ],
 			[ "MorphAnimMesh", "api/objects/MorphAnimMesh" ],
-			[ "PointCloud", "api/objects/PointCloud" ],
+			[ "Points", "api/objects/Points" ],
 			[ "SkinnedMesh", "api/objects/SkinnedMesh" ],
+			[ "Skeleton", "api/objects/Skeleton" ],
 			[ "Sprite", "api/objects/Sprite" ]
 		],
 
@@ -134,7 +133,8 @@ var list = {
 
 		"Renderers / WebGL": [
 			[ "WebGLProgram", "api/renderers/webgl/WebGLProgram" ],
-			[ "WebGLShader", "api/renderers/webgl/WebGLShader" ]
+			[ "WebGLShader", "api/renderers/webgl/WebGLShader" ],
+			[ "WebGLState", "api/renderers/webgl/WebGLState" ]
 		],
 
 		"Renderers / WebGL / Plugins": [
@@ -150,6 +150,7 @@ var list = {
 		],
 
 		"Textures": [
+			[ "CubeTexture", "api/textures/CubeTexture" ],
 			[ "CompressedTexture", "api/textures/CompressedTexture" ],
 			[ "DataTexture", "api/textures/DataTexture" ],
 			[ "Texture", "api/textures/Texture" ]
@@ -158,15 +159,13 @@ var list = {
 		"Extras": [
 			[ "FontUtils", "api/extras/FontUtils" ],
 			[ "GeometryUtils", "api/extras/GeometryUtils" ],
-			[ "ImageUtils", "api/extras/ImageUtils" ],
 			[ "SceneUtils", "api/extras/SceneUtils" ]
 		],
 
 		"Extras / Animation": [
 			[ "Animation", "api/extras/animation/Animation" ],
 			[ "AnimationHandler", "api/extras/animation/AnimationHandler" ],
-			[ "KeyFrameAnimation", "api/extras/animation/KeyFrameAnimation" ],
-			[ "AnimationMorphTarget", "api/extras/animation/AnimationMorphTarget" ]
+			[ "KeyFrameAnimation", "api/extras/animation/KeyFrameAnimation" ]
 		],
 
 		"Extras / Core": [
@@ -228,7 +227,6 @@ var list = {
 			[ "PointLightHelper", "api/extras/helpers/PointLightHelper" ],
 			[ "SpotLightHelper", "api/extras/helpers/SpotLightHelper" ],
 			[ "VertexNormalsHelper", "api/extras/helpers/VertexNormalsHelper" ],
-			[ "VertexTangentsHelper", "api/extras/helpers/VertexTangentsHelper" ],
 			[ "WireframeHelper", "api/extras/helpers/WireframeHelper" ]
 		],
 
@@ -239,7 +237,8 @@ var list = {
 
 		"Examples" : [
 			[ "CombinedCamera", "api/examples/cameras/CombinedCamera" ],
-			[ "LookupTable", "api/examples/Lut" ]
+			[ "LookupTable", "api/examples/Lut" ],
+			[ "SpriteCanvasMaterial", "api/examples/SpriteCanvasMaterial" ]
 
 		]
 

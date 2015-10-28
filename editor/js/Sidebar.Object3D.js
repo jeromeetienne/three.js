@@ -41,22 +41,20 @@ Sidebar.Object3D = function ( editor ) {
 		switch ( this.getValue() ) {
 
 			case 'Reset Position':
-				object.position.set( 0, 0, 0 );
+				editor.execute( new SetPositionCommand( object, new THREE.Vector3( 0, 0, 0 ) ) );
 				break;
 
 			case 'Reset Rotation':
-				object.rotation.set( 0, 0, 0 );
+				editor.execute( new SetRotationCommand( object, new THREE.Euler( 0, 0, 0 ) ) );
 				break;
 
 			case 'Reset Scale':
-				object.scale.set( 1, 1, 1 );
+				editor.execute( new SetScaleCommand( object, new THREE.Vector3( 1, 1, 1 ) ) );
 				break;
 
 		}
 
 		this.setValue( 'Actions' );
-
-		signals.objectChanged.dispatch( object );
 
 	} );
 	container.addStatic( objectActions );
@@ -71,7 +69,7 @@ Sidebar.Object3D = function ( editor ) {
 
 		objectUUID.setValue( THREE.Math.generateUUID() );
 
-		editor.selected.uuid = objectUUID.getValue();
+		editor.execute( new SetUuidCommand( editor.selected, objectUUID.getValue() ) );
 
 	} );
 
@@ -86,7 +84,7 @@ Sidebar.Object3D = function ( editor ) {
 	var objectNameRow = new UI.Panel();
 	var objectName = new UI.Input().setWidth( '150px' ).setFontSize( '12px' ).onChange( function () {
 
-		editor.nameObject( editor.selected, objectName.getValue() );
+		editor.execute( new SetValueCommand( editor.selected, 'name', objectName.getValue() ) );
 
 	} );
 
@@ -95,6 +93,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	container.add( objectNameRow );
 
+	/*
 	// parent
 
 	var objectParentRow = new UI.Panel();
@@ -104,79 +103,168 @@ Sidebar.Object3D = function ( editor ) {
 	objectParentRow.add( objectParent );
 
 	container.add( objectParentRow );
+	*/
 
 	// position
 
-	var objectPositionRow = new UI.Vector3Row().setLabel('Position').onChange( update );
+	var objectPositionRow = new UI.Panel();
+	var objectPositionX = new UI.Number().setWidth( '50px' ).onChange( update );
+	var objectPositionY = new UI.Number().setWidth( '50px' ).onChange( update );
+	var objectPositionZ = new UI.Number().setWidth( '50px' ).onChange( update );
+
+	objectPositionRow.add( new UI.Text( 'Position' ).setWidth( '90px' ) );
+	objectPositionRow.add( objectPositionX, objectPositionY, objectPositionZ );
+
 	container.add( objectPositionRow );
 
 	// rotation
 
-	var objectRotationRow = new UI.Vector3Row().setLabel('Rotation').onChange( update );
+	var objectRotationRow = new UI.Panel();
+	var objectRotationX = new UI.Number().setWidth( '50px' ).onChange( update );
+	var objectRotationY = new UI.Number().setWidth( '50px' ).onChange( update );
+	var objectRotationZ = new UI.Number().setWidth( '50px' ).onChange( update );
+
+	objectRotationRow.add( new UI.Text( 'Rotation' ).setWidth( '90px' ) );
+	objectRotationRow.add( objectRotationX, objectRotationY, objectRotationZ );
+
 	container.add( objectRotationRow );
 
 	// scale
 
-	var objectScaleRow	= new UI.LockableVector3Row().setLabel('Scale').onChange(update)
+	var objectScaleRow = new UI.Panel();
+	var objectScaleLock = new UI.Checkbox( true ).setPosition( 'absolute' ).setLeft( '75px' );
+	var objectScaleX = new UI.Number( 1 ).setRange( 0.01, Infinity ).setWidth( '50px' ).onChange( updateScaleX );
+	var objectScaleY = new UI.Number( 1 ).setRange( 0.01, Infinity ).setWidth( '50px' ).onChange( updateScaleY );
+	var objectScaleZ = new UI.Number( 1 ).setRange( 0.01, Infinity ).setWidth( '50px' ).onChange( updateScaleZ );
+
+	objectScaleRow.add( new UI.Text( 'Scale' ).setWidth( '90px' ) );
+	objectScaleRow.add( objectScaleLock );
+	objectScaleRow.add( objectScaleX, objectScaleY, objectScaleZ );
+
 	container.add( objectScaleRow );
-	objectScaleRow.setLocked(true)
-	objectScaleRow.valueX.setRange(0.01, Infinity).setPrecision(2)
-	objectScaleRow.valueY.setRange(0.01, Infinity).setPrecision(2)
-	objectScaleRow.valueZ.setRange(0.01, Infinity).setPrecision(2)
 
 	// fov
 
-	var objectFovRow	= new UI.NumberRow().setLabel('Fov').onChange(update)
+	var objectFovRow = new UI.Panel();
+	var objectFov = new UI.Number().onChange( update );
+
+	objectFovRow.add( new UI.Text( 'Fov' ).setWidth( '90px' ) );
+	objectFovRow.add( objectFov );
+
 	container.add( objectFovRow );
 
 	// near
 
-	var objectNearRow	= new UI.NumberRow().setLabel('Near').onChange(update)
+	var objectNearRow = new UI.Panel();
+	var objectNear = new UI.Number().onChange( update );
+
+	objectNearRow.add( new UI.Text( 'Near' ).setWidth( '90px' ) );
+	objectNearRow.add( objectNear );
+
 	container.add( objectNearRow );
 
 	// far
 
-	var objectFarRow	= new UI.NumberRow().setLabel('Far').onChange(update)
+	var objectFarRow = new UI.Panel();
+	var objectFar = new UI.Number().onChange( update );
+
+	objectFarRow.add( new UI.Text( 'Far' ).setWidth( '90px' ) );
+	objectFarRow.add( objectFar );
+
 	container.add( objectFarRow );
 
 	// intensity
 
-	var objectIntensityRow	= new UI.NumberRow().setLabel('Intensity').onChange(update)
+	var objectIntensityRow = new UI.Panel();
+	var objectIntensity = new UI.Number().setRange( 0, Infinity ).onChange( update );
+
+	objectIntensityRow.add( new UI.Text( 'Intensity' ).setWidth( '90px' ) );
+	objectIntensityRow.add( objectIntensity );
+
 	container.add( objectIntensityRow );
 
 	// color
 
-	var objectColorRow = new UI.ColorRow().setLabel('Color').onChange( update )
-	container.add( objectColorRow )
+	var objectColorRow = new UI.Panel();
+	var objectColor = new UI.Color().onChange( update );
+
+	objectColorRow.add( new UI.Text( 'Color' ).setWidth( '90px' ) );
+	objectColorRow.add( objectColor );
+
+	container.add( objectColorRow );
 
 	// ground color
 
-	var objectGroundColorRow = new UI.ColorRow().setLabel('Ground Color').onChange( update )
-	container.add( objectGroundColorRow )
+	var objectGroundColorRow = new UI.Panel();
+	var objectGroundColor = new UI.Color().onChange( update );
+
+	objectGroundColorRow.add( new UI.Text( 'Ground color' ).setWidth( '90px' ) );
+	objectGroundColorRow.add( objectGroundColor );
+
+	container.add( objectGroundColorRow );
 
 	// distance
 
-	var objectDistanceRow	= new UI.NumberRow().setLabel('Distance').onChange(update)
+	var objectDistanceRow = new UI.Panel();
+	var objectDistance = new UI.Number().setRange( 0, Infinity ).onChange( update );
+
+	objectDistanceRow.add( new UI.Text( 'Distance' ).setWidth( '90px' ) );
+	objectDistanceRow.add( objectDistance );
+
 	container.add( objectDistanceRow );
 
 	// angle
 
-	var objectAngleRow	= new UI.NumberRow().setLabel('Angle').onChange(update)
+	var objectAngleRow = new UI.Panel();
+	var objectAngle = new UI.Number().setPrecision( 3 ).setRange( 0, Math.PI / 2 ).onChange( update );
+
+	objectAngleRow.add( new UI.Text( 'Angle' ).setWidth( '90px' ) );
+	objectAngleRow.add( objectAngle );
+
 	container.add( objectAngleRow );
 
 	// exponent
 
-	var objectExponentRow	= new UI.NumberRow().setLabel('Exponent').onChange(update)
+	var objectExponentRow = new UI.Panel();
+	var objectExponent = new UI.Number().setRange( 0, Infinity ).onChange( update );
+
+	objectExponentRow.add( new UI.Text( 'Exponent' ).setWidth( '90px' ) );
+	objectExponentRow.add( objectExponent );
+
 	container.add( objectExponentRow );
 
 	// decay
 
-	var objectDecayRow	= new UI.NumberRow().setLabel('Decay').onChange(update)
+	var objectDecayRow = new UI.Panel();
+	var objectDecay = new UI.Number().setRange( 0, Infinity ).onChange( update );
+
+	objectDecayRow.add( new UI.Text( 'Decay' ).setWidth( '90px' ) );
+	objectDecayRow.add( objectDecay );
+
 	container.add( objectDecayRow );
+
+	// shadow
+
+	var objectShadowRow = new UI.Panel();
+
+	objectShadowRow.add( new UI.Text( 'Shadow' ).setWidth( '90px' ) );
+
+	var objectCastShadow = new UI.THREE.Boolean( false, 'cast' ).onChange( update );
+	objectShadowRow.add( objectCastShadow );
+
+	var objectReceiveShadow = new UI.THREE.Boolean( false, 'receive' ).onChange( update );
+	objectShadowRow.add( objectReceiveShadow );
+
+	container.add( objectShadowRow );
 
 	// visible
 
-	var objectVisibleRow	= new UI.CheckboxRow().setLabel('Visible').onChange( update )
+	var objectVisibleRow = new UI.Panel();
+	var objectVisible = new UI.Checkbox().onChange( update );
+
+	objectVisibleRow.add( new UI.Text( 'Visible' ).setWidth( '90px' ) );
+	objectVisibleRow.add( objectVisible );
+
 	container.add( objectVisibleRow );
 
 	// user data
@@ -209,71 +297,198 @@ Sidebar.Object3D = function ( editor ) {
 	container.add( objectUserDataRow );
 
 
+	//
+
+	function updateScaleX() {
+
+		var object = editor.selected;
+
+		if ( objectScaleLock.getValue() === true ) {
+
+			var scale = objectScaleX.getValue() / object.scale.x;
+
+			objectScaleY.setValue( objectScaleY.getValue() * scale );
+			objectScaleZ.setValue( objectScaleZ.getValue() * scale );
+
+		}
+
+		update();
+
+	}
+
+	function updateScaleY() {
+
+		var object = editor.selected;
+
+		if ( objectScaleLock.getValue() === true ) {
+
+			var scale = objectScaleY.getValue() / object.scale.y;
+
+			objectScaleX.setValue( objectScaleX.getValue() * scale );
+			objectScaleZ.setValue( objectScaleZ.getValue() * scale );
+
+		}
+
+		update();
+
+	}
+
+	function updateScaleZ() {
+
+		var object = editor.selected;
+
+		if ( objectScaleLock.getValue() === true ) {
+
+			var scale = objectScaleZ.getValue() / object.scale.z;
+
+			objectScaleX.setValue( objectScaleX.getValue() * scale );
+			objectScaleY.setValue( objectScaleY.getValue() * scale );
+
+		}
+
+		update();
+
+	}
+
 	function update() {
 
 		var object = editor.selected;
 
 		if ( object !== null ) {
 
-			if ( object.parent !== undefined ) {
+			/*
+			if ( object.parent !== null ) {
 
 				var newParentId = parseInt( objectParent.getValue() );
 
 				if ( object.parent.id !== newParentId && object.id !== newParentId ) {
 
-					editor.moveObject( object, editor.scene.getObjectById( newParentId ) );
+					editor.execute( new MoveObjectCommand( object, editor.scene.getObjectById( newParentId ) ) );
 
 				}
 
 			}
-			
-			objectPositionRow.update(object.position)
-			objectRotationRow.update(object.rotation)
-			objectScaleRow.update(object.scale)
+			*/
 
-			objectFovRow.update(object, 'fov')
+			var newPosition = new THREE.Vector3( objectPositionX.getValue(), objectPositionY.getValue(), objectPositionZ.getValue() );
+			if ( object.position.distanceTo( newPosition ) >= 0.01 ) {
 
-			if ( object.fov !== undefined ) {
+				editor.execute( new SetPositionCommand( object, newPosition ) );
 
+			}
+
+			var newRotation = new THREE.Euler( objectRotationX.getValue(), objectRotationY.getValue(), objectRotationZ.getValue() );
+			if ( object.rotation.toVector3().distanceTo( newRotation.toVector3() ) >= 0.01 ) {
+
+				editor.execute( new SetRotationCommand( object, newRotation ) );
+
+			}
+
+			var newScale = new THREE.Vector3( objectScaleX.getValue(), objectScaleY.getValue(), objectScaleZ.getValue() );
+			if ( object.scale.distanceTo( newScale ) >= 0.01 ) {
+
+				editor.execute( new SetScaleCommand( object, newScale ) );
+
+			}
+
+			if ( object.fov !== undefined && Math.abs( object.fov - objectFov.getValue() ) >= 0.01 ) {
+
+				editor.execute( new SetValueCommand( object, 'fov', objectFov.getValue() ) );
 				object.updateProjectionMatrix();
 
 			}
 
-			objectNearRow.update(object, 'near')
-			objectFarRow.update(object, 'far')
+			if ( object.near !== undefined && Math.abs( object.near - objectNear.getValue() ) >= 0.01 ) {
 
-			objectIntensityRow.update(object, 'intensity')
-
-			if( object.color !== undefined ){
-
-				object.color.setHex( objectColorRow.getHexValue() )
+				editor.execute( new SetValueCommand( object, 'near', objectNear.getValue() ) );
 
 			}
 
-			if ( object.groundColor !== undefined ) {
+			if ( object.far !== undefined && Math.abs( object.far - objectFar.getValue() ) >= 0.01 ) {
 
-				object.groundColor.setHex( objectGroundColorRow.getHexValue() )
+				editor.execute( new SetValueCommand( object, 'far', objectFar.getValue() ) );
 
 			}
 
-			objectDistanceRow.update(object, 'distance')
-			objectAngleRow.update(object, 'angle')
-			objectExponentRow.update(object, 'exponent')
-			objectDecayRow.update(object, 'decay')
+			if ( object.intensity !== undefined && Math.abs( object.intensity - objectIntensity.getValue() ) >= 0.01 ) {
 
-			objectVisibleRow.update(object, 'visible')
+				editor.execute( new SetValueCommand( object, 'intensity', objectIntensity.getValue() ) );
+
+			}
+
+			if ( object.color !== undefined && object.color.getHex() !== objectColor.getHexValue() ) {
+
+				editor.execute( new SetColorCommand( object, 'color', objectColor.getHexValue() ) );
+
+			}
+
+			if ( object.groundColor !== undefined && object.groundColor.getHex() !== objectGroundColor.getHexValue() ) {
+
+				editor.execute( new SetColorCommand( object, 'groundColor', objectGroundColor.getHexValue() ) );
+
+			}
+
+			if ( object.distance !== undefined && Math.abs( object.distance - objectDistance.getValue() ) >= 0.01 ) {
+
+				editor.execute( new SetValueCommand( object, 'distance', objectDistance.getValue() ) );
+
+			}
+
+			if ( object.angle !== undefined && Math.abs( object.angle - objectAngle.getValue() ) >= 0.01 ) {
+
+				editor.execute( new SetValueCommand( object, 'angle', objectAngle.getValue() ) );
+
+			}
+
+			if ( object.exponent !== undefined && Math.abs( object.exponent - objectExponent.getValue() ) >= 0.01 ) {
+
+				editor.execute( new SetValueCommand( object, 'exponent', objectExponent.getValue() ) );
+
+			}
+
+			if ( object.decay !== undefined && Math.abs( object.decay - objectDecay.getValue() ) >= 0.01 ) {
+
+				editor.execute( new SetValueCommand( object, 'decay', objectDecay.getValue() ) );
+
+			}
+
+			if ( object.visible !== objectVisible.getValue() ) {
+
+				editor.execute( new SetValueCommand( object, 'visible', objectVisible.getValue() ) );
+
+			}
+
+			if ( object.castShadow !== objectCastShadow.getValue() ) {
+
+				editor.execute( new SetValueCommand( object, 'castShadow', objectCastShadow.getValue() ) );
+
+			}
+
+			if ( object.receiveShadow !== undefined ) {
+
+				if ( object.receiveShadow !== objectReceiveShadow.getValue() ) {
+
+					editor.execute( new SetValueCommand( object, 'receiveShadow', objectReceiveShadow.getValue() ) );
+					object.material.needsUpdate = true;
+
+				}
+
+			}
 
 			try {
 
-				object.userData = JSON.parse( objectUserData.getValue() );
+				var userData = JSON.parse( objectUserData.getValue() );
+				if ( JSON.stringify( object.userData ) != JSON.stringify( userData ) ) {
+
+					editor.execute( new SetValueCommand( object, 'userData', userData ) );
+
+				}
 
 			} catch ( exception ) {
 
 				console.warn( exception );
 
 			}
-
-			signals.objectChanged.dispatch( object );
 
 		}
 
@@ -282,7 +497,19 @@ Sidebar.Object3D = function ( editor ) {
 	function updateRows( object ) {
 
 		var properties = {
-			'parent': objectParentRow,
+			// 'parent': objectParentRow,
+			'fov': objectFovRow,
+			'near': objectNearRow,
+			'far': objectFarRow,
+			'intensity': objectIntensityRow,
+			'color': objectColorRow,
+			'groundColor': objectGroundColorRow,
+			'distance' : objectDistanceRow,
+			'angle' : objectAngleRow,
+			'exponent' : objectExponentRow,
+			'decay' : objectDecayRow,
+			'castShadow' : objectShadowRow,
+			'receiveShadow' : objectReceiveShadow
 		};
 
 		for ( var property in properties ) {
@@ -329,6 +556,7 @@ Sidebar.Object3D = function ( editor ) {
 
 	} );
 
+	/*
 	signals.sceneGraphChanged.add( function () {
 
 		var scene = editor.scene;
@@ -343,8 +571,17 @@ Sidebar.Object3D = function ( editor ) {
 		objectParent.setOptions( options );
 
 	} );
+	*/
 
 	signals.objectChanged.add( function ( object ) {
+
+		if ( object !== editor.selected ) return;
+
+		updateUI( object );
+
+	} );
+
+	signals.refreshSidebarObject3D.add( function ( object ) {
 
 		if ( object !== editor.selected ) return;
 
@@ -359,40 +596,99 @@ Sidebar.Object3D = function ( editor ) {
 		objectUUID.setValue( object.uuid );
 		objectName.setValue( object.name );
 
-		if ( object.parent !== undefined ) {
+		/*
+		if ( object.parent !== null ) {
 
 			objectParent.setValue( object.parent.id );
 
 		}
-		
-		objectPositionRow.updateUI( object.position )
-		objectRotationRow.updateUI( object.rotation )
-		objectScaleRow.updateUI( object.scale )
+		*/
 
-		objectFovRow.updateUI( object.fov );
-		objectNearRow.updateUI( object.near );
-		objectFarRow.updateUI( object.far );
+		objectPositionX.setValue( object.position.x );
+		objectPositionY.setValue( object.position.y );
+		objectPositionZ.setValue( object.position.z );
 
-		objectIntensityRow.updateUI( object.intensity );
-		
-		if( object.color !== undefined ){
+		objectRotationX.setValue( object.rotation.x );
+		objectRotationY.setValue( object.rotation.y );
+		objectRotationZ.setValue( object.rotation.z );
 
-			objectColorRow.updateUI(object.color.getHex())
-	
-		}
-		
-		if( object.groundColor !== undefined ){
-			
-			objectGroundColorRow.updateUI(object.groundColor.getHex())
+		objectScaleX.setValue( object.scale.x );
+		objectScaleY.setValue( object.scale.y );
+		objectScaleZ.setValue( object.scale.z );
+
+		if ( object.fov !== undefined ) {
+
+			objectFov.setValue( object.fov );
 
 		}
 
-		objectDistanceRow.updateUI( object.distance );
-		objectAngleRow.updateUI( object.angle );
-		objectExponentRow.updateUI( object.exponent );
-		objectDecayRow.updateUI( object.decay );
+		if ( object.near !== undefined ) {
 
-		objectVisibleRow.updateUI( object.visible );
+			objectNear.setValue( object.near );
+
+		}
+
+		if ( object.far !== undefined ) {
+
+			objectFar.setValue( object.far );
+
+		}
+
+		if ( object.intensity !== undefined ) {
+
+			objectIntensity.setValue( object.intensity );
+
+		}
+
+		if ( object.color !== undefined ) {
+
+			objectColor.setHexValue( object.color.getHexString() );
+
+		}
+
+		if ( object.groundColor !== undefined ) {
+
+			objectGroundColor.setHexValue( object.groundColor.getHexString() );
+
+		}
+
+		if ( object.distance !== undefined ) {
+
+			objectDistance.setValue( object.distance );
+
+		}
+
+		if ( object.angle !== undefined ) {
+
+			objectAngle.setValue( object.angle );
+
+		}
+
+		if ( object.exponent !== undefined ) {
+
+			objectExponent.setValue( object.exponent );
+
+		}
+
+		if ( object.decay !== undefined ) {
+
+			objectDecay.setValue( object.decay );
+
+		}
+
+		if ( object.castShadow !== undefined ) {
+
+			objectCastShadow.setValue( object.castShadow );
+
+		}
+
+		if ( object.receiveShadow !== undefined ) {
+
+			objectReceiveShadow.setValue( object.receiveShadow );
+
+		}
+
+		objectVisible.setValue( object.visible );
 
 		try {
 

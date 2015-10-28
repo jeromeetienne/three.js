@@ -86,8 +86,13 @@ Menubar.File = function ( editor ) {
 		}
 
 		var output = geometry.toJSON();
-		output = JSON.stringify( output, null, '\t' );
-		output = output.replace( /[\n\t]+([\d\.e\-\[\]]+)/g, '$1' );
+
+		try {
+			output = JSON.stringify( output, null, '\t' );
+			output = output.replace( /[\n\t]+([\d\.e\-\[\]]+)/g, '$1' );
+		} catch ( e ) {
+			output = JSON.stringify( output );
+		}
 
 		exportString( output, 'geometry.json' );
 
@@ -111,8 +116,13 @@ Menubar.File = function ( editor ) {
 		}
 
 		var output = object.toJSON();
-		output = JSON.stringify( output, null, '\t' );
-		output = output.replace( /[\n\t]+([\d\.e\-\[\]]+)/g, '$1' );
+
+		try {
+			output = JSON.stringify( output, null, '\t' );
+			output = output.replace( /[\n\t]+([\d\.e\-\[\]]+)/g, '$1' );
+		} catch ( e ) {
+			output = JSON.stringify( output );
+		}
 
 		exportString( output, 'model.json' );
 
@@ -127,8 +137,13 @@ Menubar.File = function ( editor ) {
 	option.onClick( function () {
 
 		var output = editor.scene.toJSON();
-		output = JSON.stringify( output, null, '\t' );
-		output = output.replace( /[\n\t]+([\d\.e\-\[\]]+)/g, '$1' );
+
+		try {
+			output = JSON.stringify( output, null, '\t' );
+			output = output.replace( /[\n\t]+([\d\.e\-\[\]]+)/g, '$1' );
+		} catch ( e ) {
+			output = JSON.stringify( output );
+		}
 
 		exportString( output, 'scene.json' );
 
@@ -260,34 +275,28 @@ Menubar.File = function ( editor ) {
 	} );
 	options.add( option );
 
-	/*
-	// Test
-
-	var option = new UI.Panel();
-	option.setClass( 'option' );
-	option.setTextContent( 'Test' );
-	option.onClick( function () {
-
-		var text = new UI.Text( 'blah' );
-		editor.showDialog( text );
-
-	} );
-	options.add( option );
-	*/
-
 
 	//
+
+	var link = document.createElement( 'a' );
+	link.style.display = 'none';
+	document.body.appendChild( link ); // Firefox workaround, see #6594
 
 	var exportString = function ( output, filename ) {
 
 		var blob = new Blob( [ output ], { type: 'text/plain' } );
 		var objectURL = URL.createObjectURL( blob );
 
-		var link = document.createElement( 'a' );
 		link.href = objectURL;
 		link.download = filename || 'data.json';
 		link.target = '_blank';
-		link.click();
+
+		var event = document.createEvent("MouseEvents");
+		event.initMouseEvent(
+			"click", true, false, window, 0, 0, 0, 0, 0
+			, false, false, false, false, 0, null
+		);
+		link.dispatchEvent(event);
 
 	};
 

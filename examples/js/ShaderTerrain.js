@@ -23,32 +23,32 @@ THREE.ShaderTerrain = {
 
 			{
 
-			"enableDiffuse1"  : { type: "i", value: 0 },
-			"enableDiffuse2"  : { type: "i", value: 0 },
-			"enableSpecular"  : { type: "i", value: 0 },
-			"enableReflection": { type: "i", value: 0 },
+				"enableDiffuse1"  : { type: "i", value: 0 },
+				"enableDiffuse2"  : { type: "i", value: 0 },
+				"enableSpecular"  : { type: "i", value: 0 },
+				"enableReflection": { type: "i", value: 0 },
 
-			"tDiffuse1"	   : { type: "t", value: null },
-			"tDiffuse2"	   : { type: "t", value: null },
-			"tDetail"	   : { type: "t", value: null },
-			"tNormal"	   : { type: "t", value: null },
-			"tSpecular"	   : { type: "t", value: null },
-			"tDisplacement": { type: "t", value: null },
+				"tDiffuse1"	   : { type: "t", value: null },
+				"tDiffuse2"	   : { type: "t", value: null },
+				"tDetail"	   : { type: "t", value: null },
+				"tNormal"	   : { type: "t", value: null },
+				"tSpecular"	   : { type: "t", value: null },
+				"tDisplacement": { type: "t", value: null },
 
-			"uNormalScale": { type: "f", value: 1.0 },
+				"uNormalScale": { type: "f", value: 1.0 },
 
-			"uDisplacementBias": { type: "f", value: 0.0 },
-			"uDisplacementScale": { type: "f", value: 1.0 },
+				"uDisplacementBias": { type: "f", value: 0.0 },
+				"uDisplacementScale": { type: "f", value: 1.0 },
 
-			"diffuse": { type: "c", value: new THREE.Color( 0xeeeeee ) },
-			"specular": { type: "c", value: new THREE.Color( 0x111111 ) },
-			"shininess": { type: "f", value: 30 },
-			"opacity": { type: "f", value: 1 },
+				"diffuse": { type: "c", value: new THREE.Color( 0xeeeeee ) },
+				"specular": { type: "c", value: new THREE.Color( 0x111111 ) },
+				"shininess": { type: "f", value: 30 },
+				"opacity": { type: "f", value: 1 },
 
-			"uRepeatBase"    : { type: "v2", value: new THREE.Vector2( 1, 1 ) },
-			"uRepeatOverlay" : { type: "v2", value: new THREE.Vector2( 1, 1 ) },
+				"uRepeatBase"    : { type: "v2", value: new THREE.Vector2( 1, 1 ) },
+				"uRepeatOverlay" : { type: "v2", value: new THREE.Vector2( 1, 1 ) },
 
-			"uOffset" : { type: "v2", value: new THREE.Vector2( 0, 0 ) }
+				"uOffset" : { type: "v2", value: new THREE.Vector2( 0, 0 ) }
 
 			}
 
@@ -86,33 +86,11 @@ THREE.ShaderTerrain = {
 
 			"uniform vec3 ambientLightColor;",
 
-			"#if MAX_DIR_LIGHTS > 0",
-
-				"uniform vec3 directionalLightColor[ MAX_DIR_LIGHTS ];",
-				"uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];",
-
-			"#endif",
-
-			"#if MAX_HEMI_LIGHTS > 0",
-
-				"uniform vec3 hemisphereLightSkyColor[ MAX_HEMI_LIGHTS ];",
-				"uniform vec3 hemisphereLightGroundColor[ MAX_HEMI_LIGHTS ];",
-				"uniform vec3 hemisphereLightDirection[ MAX_HEMI_LIGHTS ];",
-
-			"#endif",
-
-			"#if MAX_POINT_LIGHTS > 0",
-
-				"uniform vec3 pointLightColor[ MAX_POINT_LIGHTS ];",
-				"uniform vec3 pointLightPosition[ MAX_POINT_LIGHTS ];",
-				"uniform float pointLightDistance[ MAX_POINT_LIGHTS ];",
-				"uniform float pointLightDecay[ MAX_POINT_LIGHTS ];",
-
-			"#endif",
-
 			"varying vec3 vViewPosition;",
 
 			THREE.ShaderChunk[ "common" ],
+			THREE.ShaderChunk[ "bsdfs" ],
+			THREE.ShaderChunk[ "lights_pars" ],
 			THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
 			THREE.ShaderChunk[ "fog_pars_fragment" ],
 
@@ -168,10 +146,9 @@ THREE.ShaderTerrain = {
 
 					"for ( int i = 0; i < MAX_POINT_LIGHTS; i ++ ) {",
 
-						"vec4 lPosition = viewMatrix * vec4( pointLightPosition[ i ], 1.0 );",
-						"vec3 lVector = lPosition.xyz + vViewPosition.xyz;",
+						"vec3 lVector = pointLights[ i ].position + vViewPosition.xyz;",
 
-						"float attenuation = calcLightAttenuation( length( lVector ), pointLightDistance[ i ], pointLightDecay[i] );",
+						"float attenuation = calcLightAttenuation( length( lVector ), pointLights[ i ].distance, pointLights[ i ].decay );",
 
 						"lVector = normalize( lVector );",
 
@@ -182,8 +159,8 @@ THREE.ShaderTerrain = {
 
 						"float pointSpecularWeight = specularTex.r * max( pow( pointDotNormalHalf, shininess ), 0.0 );",
 
-						"totalDiffuseLight += attenuation * pointLightColor[ i ] * pointDiffuseWeight;",
-						"totalSpecularLight += attenuation * pointLightColor[ i ] * specular * pointSpecularWeight * pointDiffuseWeight;",
+						"totalDiffuseLight += attenuation * pointLights[ i ].color * pointDiffuseWeight;",
+						"totalSpecularLight += attenuation * pointLights[ i ].color * specular * pointSpecularWeight * pointDiffuseWeight;",
 
 					"}",
 
@@ -198,7 +175,7 @@ THREE.ShaderTerrain = {
 
 					"for( int i = 0; i < MAX_DIR_LIGHTS; i++ ) {",
 
-						"vec3 dirVector = transformDirection( directionalLightDirection[ i ], viewMatrix );",
+						"vec3 dirVector = directionalLights[ i ].direction;",
 						"vec3 dirHalfVector = normalize( dirVector + viewPosition );",
 
 						"float dirDotNormalHalf = max( dot( normal, dirHalfVector ), 0.0 );",
@@ -206,8 +183,8 @@ THREE.ShaderTerrain = {
 
 						"float dirSpecularWeight = specularTex.r * max( pow( dirDotNormalHalf, shininess ), 0.0 );",
 
-						"totalDiffuseLight += directionalLightColor[ i ] * dirDiffuseWeight;",
-						"totalSpecularLight += directionalLightColor[ i ] * specular * dirSpecularWeight * dirDiffuseWeight;",
+						"totalDiffuseLight += directionalLights[ i ].color * dirDiffuseWeight;",
+						"totalSpecularLight += directionalLights[ i ].color * specular * dirSpecularWeight * dirDiffuseWeight;",
 
 					"}",
 
@@ -222,14 +199,14 @@ THREE.ShaderTerrain = {
 
 					"for( int i = 0; i < MAX_HEMI_LIGHTS; i ++ ) {",
 
-						"vec3 lVector = transformDirection( hemisphereLightDirection[ i ], viewMatrix );",
+						"vec3 lVector = hemisphereLightDirection[ i ];",
 
 						// diffuse
 
 						"float dotProduct = dot( normal, lVector );",
 						"float hemiDiffuseWeight = 0.5 * dotProduct + 0.5;",
 
-						"totalDiffuseLight += mix( hemisphereLightGroundColor[ i ], hemisphereLightSkyColor[ i ], hemiDiffuseWeight );",
+						"totalDiffuseLight += mix( hemisphereLights[ i ].groundColor, hemisphereLights[ i ].skyColor, hemiDiffuseWeight );",
 
 						// specular (sky light)
 
@@ -247,7 +224,7 @@ THREE.ShaderTerrain = {
 						"float hemiDotNormalHalfGround = 0.5 * dot( normal, hemiHalfVectorGround ) + 0.5;",
 						"hemiSpecularWeight += specularTex.r * max( pow( hemiDotNormalHalfGround, shininess ), 0.0 );",
 
-						"totalSpecularLight += specular * mix( hemisphereLightGroundColor[ i ], hemisphereLightSkyColor[ i ], hemiDiffuseWeight ) * hemiSpecularWeight * hemiDiffuseWeight;",
+						"totalSpecularLight += specular * mix( hemisphereLights[ i ].groundColor, hemisphereLights[ i ].skyColor, hemiDiffuseWeight ) * hemiSpecularWeight * hemiDiffuseWeight;",
 
 					"}",
 
@@ -263,7 +240,7 @@ THREE.ShaderTerrain = {
 
 			"}"
 
-		].join("\n"),
+		].join( "\n" ),
 
 		vertexShader: [
 
@@ -336,7 +313,7 @@ THREE.ShaderTerrain = {
 
 			"}"
 
-		].join("\n")
+		].join( "\n" )
 
 	}
 

@@ -5,29 +5,19 @@
 
 THREE.WebGLRenderTarget = function ( width, height, options ) {
 
+	this.uuid = THREE.Math.generateUUID();
+
 	this.width = width;
 	this.height = height;
 
 	options = options || {};
 
-	this.wrapS = options.wrapS !== undefined ? options.wrapS : THREE.ClampToEdgeWrapping;
-	this.wrapT = options.wrapT !== undefined ? options.wrapT : THREE.ClampToEdgeWrapping;
+	if ( options.minFilter === undefined ) options.minFilter = THREE.LinearFilter;
 
-	this.magFilter = options.magFilter !== undefined ? options.magFilter : THREE.LinearFilter;
-	this.minFilter = options.minFilter !== undefined ? options.minFilter : THREE.LinearMipMapLinearFilter;
-
-	this.anisotropy = options.anisotropy !== undefined ? options.anisotropy : 1;
-
-	this.offset = new THREE.Vector2( 0, 0 );
-	this.repeat = new THREE.Vector2( 1, 1 );
-
-	this.format = options.format !== undefined ? options.format : THREE.RGBAFormat;
-	this.type = options.type !== undefined ? options.type : THREE.UnsignedByteType;
+	this.texture = new THREE.Texture( undefined, undefined, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy );
 
 	this.depthBuffer = options.depthBuffer !== undefined ? options.depthBuffer : true;
 	this.stencilBuffer = options.stencilBuffer !== undefined ? options.stencilBuffer : true;
-
-	this.generateMipmaps = true;
 
 	this.shareDepthFrom = options.shareDepthFrom !== undefined ? options.shareDepthFrom : null;
 
@@ -39,37 +29,36 @@ THREE.WebGLRenderTarget.prototype = {
 
 	setSize: function ( width, height ) {
 
-		this.width = width;
-		this.height = height;
+		if ( this.width !== width || this.height !== height ) {
+
+			this.width = width;
+			this.height = height;
+
+			this.dispose();
+
+		}
 
 	},
 
 	clone: function () {
 
-		var tmp = new THREE.WebGLRenderTarget( this.width, this.height );
+		return new this.constructor().copy( this );
 
-		tmp.wrapS = this.wrapS;
-		tmp.wrapT = this.wrapT;
+	},
 
-		tmp.magFilter = this.magFilter;
-		tmp.minFilter = this.minFilter;
+	copy: function ( source ) {
 
-		tmp.anisotropy = this.anisotropy;
+		this.width = source.width;
+		this.height = source.height;
 
-		tmp.offset.copy( this.offset );
-		tmp.repeat.copy( this.repeat );
+		this.texture = source.texture.clone();
 
-		tmp.format = this.format;
-		tmp.type = this.type;
+		this.depthBuffer = source.depthBuffer;
+		this.stencilBuffer = source.stencilBuffer;
 
-		tmp.depthBuffer = this.depthBuffer;
-		tmp.stencilBuffer = this.stencilBuffer;
+		this.shareDepthFrom = source.shareDepthFrom;
 
-		tmp.generateMipmaps = this.generateMipmaps;
-
-		tmp.shareDepthFrom = this.shareDepthFrom;
-
-		return tmp;
+		return this;
 
 	},
 

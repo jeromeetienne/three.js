@@ -60,7 +60,7 @@
 
 				var material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.2 } );
 
-				var line = new THREE.Line( geometry, material, THREE.LinePieces );
+				var line = new THREE.LineSegments( geometry, material );
 				scene.add( line );
 
 				// Spheres
@@ -73,7 +73,6 @@
 					new THREE.MeshBasicMaterial( { color: 0xff0000, blending: THREE.AdditiveBlending } ),
 					new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, overdraw: 0.5 } ),
 					new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.SmoothShading, overdraw: 0.5 } ),
-					new THREE.MeshDepthMaterial( { overdraw: 0.5 } ),
 					new THREE.MeshNormalMaterial( { overdraw: 0.5 } ),
 					new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'textures/land_ocean_ice_cloud_2048.jpg' ) } ),
 					new THREE.MeshBasicMaterial( { envMap: THREE.ImageUtils.loadTexture( 'textures/envmap.png', THREE.SphericalReflectionMapping ), overdraw: 0.5 } )
@@ -115,7 +114,7 @@
 					context.arc( 0, 0, 0.5, 0, PI2, true );
 					context.fill();
 
-				}
+				};
 
 				// Lights
 
@@ -176,7 +175,7 @@
 			function loadImage( path ) {
 
 				var image = document.createElement( 'img' );
-				var texture = new THREE.Texture( image, THREE.UVMapping )
+				var texture = new THREE.Texture( image, THREE.UVMapping );
 
 				image.onload = function () { texture.needsUpdate = true; };
 				image.src = path;
