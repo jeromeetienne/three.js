@@ -28,6 +28,7 @@
 
 		<script src="js/loaders/OBJLoader.js"></script>
 		<script src="js/threex.laserbeam.js"></script>
+		<script src="js/webvr-polyfill.js"></script>
 
 		<script>
 
@@ -203,7 +204,7 @@
 		if( distance < enemyObject.geometry.parameters.radius + laserBeam.object3d.scale.y*0.1 ){
 			enemyObject.material.color.set('red')
 			enemyObject.position.set(0, 1, 0.2)
-			enemyObject.position.x += THREE.Math.randFloatSpread(0.5)*2vr
+			enemyObject.position.x += THREE.Math.randFloatSpread(0.5)*2
 			enemyObject.position.y += THREE.Math.randFloatSpread(0.5)*2
 			enemyObject.userData.targetPosition.copy(enemyObject.position)
 		}else{
@@ -217,43 +218,42 @@
 	// 	object3d.rotation.x	+= 1 * delta;
 	// 	object3d.rotation.y	+= 0.01 * delta;		
 	// })
-;(function(){
-return
-	// from @sylvainpv sylvain pollet - https://twitter.com/SylvainPV/status/236255017508671488
-	// var swinging	
-	var oldPosition	= new THREE.Vector3;
-	var swinging		= false;
-	onRenderFcts.push(function(){
-		var object3D	= controller1;
-		var position	= new THREE.Vector3().setFromMatrixPosition(object3D.matrixWorld);
+				;(function(){
+				return
+					// from @sylvainpv sylvain pollet - https://twitter.com/SylvainPV/status/236255017508671488
+					// var swinging	
+					var oldPosition	= new THREE.Vector3;
+					var swinging		= false;
+					onRenderFcts.push(function(){
+						var object3D	= controller1;
+						var position	= new THREE.Vector3().setFromMatrixPosition(object3D.matrixWorld);
 
-		if( swinging === true ){
-			// copy old position
-			oldPosition.copy(position)
-			return;	
-		}
+						if( swinging === true ){
+							// copy old position
+							oldPosition.copy(position)
+							return;	
+						}
 
-		var deltaX	= position.x - oldPosition.x;
-		//console.log('delta', deltaX)
-		if( Math.abs(deltaX) > 0.3/3 ){
-			playSound("sound_swing3")			
-		}else if( Math.abs(deltaX) > 0.2/3 ){
-			playSound("sound_swing2")			
-		}else if( Math.abs(deltaX) > 0.1/3 ){
-			playSound("sound_swing1")			
-		}
-		
-		// copy old position
-		oldPosition.copy(position)
-		function playSound(domId){
-console.log('playSound', domId)
-			document.getElementById(domId).play();
-			swinging	= true;
-			setTimeout(function(){ swinging = false }, 700);
-       		}
-	})
-	
-})()
+						var deltaX	= position.x - oldPosition.x;
+						//console.log('delta', deltaX)
+						if( Math.abs(deltaX) > 0.3/3 ){
+							playSound("sound_swing3")			
+						}else if( Math.abs(deltaX) > 0.2/3 ){
+							playSound("sound_swing2")			
+						}else if( Math.abs(deltaX) > 0.1/3 ){
+							playSound("sound_swing1")			
+						}
+						
+						// copy old position
+						oldPosition.copy(position)
+						function playSound(domId){
+				console.log('playSound', domId)
+							document.getElementById(domId).play();
+							swinging	= true;
+							setTimeout(function(){ swinging = false }, 700);
+				       		}
+					})
+				})()
 
 
 				var loader = new THREE.OBJLoader();
