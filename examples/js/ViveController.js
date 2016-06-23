@@ -1,41 +1,52 @@
-THREE.ViveController = function ( id ) {
+THREE.ViveController = function(id) {
 
-	THREE.Object3D.call( this );
+    THREE.Object3D.call(this);
 
-	this.matrixAutoUpdate = false;
-	this.standingMatrix = new THREE.Matrix4();
+    this.matrixAutoUpdate = false;
+    this.standingMatrix = new THREE.Matrix4();
 
-	var scope = this;
+    var scope = this;
+    scope.lastGamepad = null
 
-	function update() {
+    function update() {
 
-		requestAnimationFrame( update );
+        requestAnimationFrame(update);
 
-		var gamepad = navigator.getGamepads()[ id ];
+        var gamepad = navigator.getGamepads()[id];
 
-		if ( gamepad !== undefined && gamepad.pose !== null ) {
+        if (gamepad !== undefined && gamepad.pose !== null) {
 
-			var pose = gamepad.pose;
+            scope.lastGamepad = gamepad
+                //     console.dir(gamepad)
 
-			scope.position.fromArray( pose.position );
-			scope.quaternion.fromArray( pose.orientation );
-			scope.matrix.compose( scope.position, scope.quaternion, scope.scale );
-			scope.matrix.multiplyMatrices( scope.standingMatrix, scope.matrix );
-			scope.matrixWorldNeedsUpdate = true;
+            //     console.log('axis 0:', gamepad.axes[0], '1:', gamepad.axes[1])
 
-			scope.visible = true;
+            //     gamepad.buttons.forEach(function(button, buttonIdx) {
+            //         console.log('button', buttonIdx, ':', 'pressed:', button.pressed, 'touched:', button.touched, 'value:', button.value)
+            //     })
 
-		} else {
 
-			scope.visible = false;
+            var pose = gamepad.pose;
 
-		}
+            scope.position.fromArray(pose.position);
+            scope.quaternion.fromArray(pose.orientation);
+            scope.matrix.compose(scope.position, scope.quaternion, scope.scale);
+            scope.matrix.multiplyMatrices(scope.standingMatrix, scope.matrix);
+            scope.matrixWorldNeedsUpdate = true;
 
-	}
+            scope.visible = true;
 
-	update();
+        } else {
+
+            scope.visible = false;
+
+        }
+
+    }
+
+    update();
 
 };
 
-THREE.ViveController.prototype = Object.create( THREE.Object3D.prototype );
+THREE.ViveController.prototype = Object.create(THREE.Object3D.prototype);
 THREE.ViveController.prototype.constructor = THREE.ViveController;

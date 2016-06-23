@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webvr - cubes</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #101010;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			a {
+				color: #f00;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="../build/three.js"></script>
+
+		<script src="js/WebVR.js"></script>
+		<script src="js/effects/VREffect.js"></script>
+		<script src="js/controls/VRControls.js"></script>
+		<script src="js/ViveController.js"></script>
+
+		<script src="js/loaders/OBJLoader.js"></script>
+		<script src="js/threex.laserbeam.js"></script>
+
+		<script>
+
+			if ( WEBVR.isLatestAvailable() === false ) {
+
+				document.body.appendChild( WEBVR.getMessage() );
+
+			}
+
+			//
+
+			var container;
+			var camera, scene, renderer;
+			var effect, controls;
+			var controller1, controller2;
+
+			var room;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				var info = document.createElement( 'div' );
+				info.style.position = 'absolute';
+				info.style.top = '10px';
+				info.style.width = '100%';
+				info.style.textAlign = 'center';
+				info.innerHTML = '<a href="http://threejs.org" target="_blank">three.js</a> webgl - htc vive';
+				container.appendChild( info );
+
+				scene = new THREE.Scene();
+
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
+				scene.add( camera );
+
+				room = new THREE.Mesh(
+					new THREE.BoxGeometry( 6, 6, 6, 10, 10, 10 ),
+					new THREE.MeshBasicMaterial( { color: 0x202020, wireframe: true } )
+				);
+				room.position.y = 3;
+				scene.add( room );
+
+				scene.add( new THREE.HemisphereLight( 0x404020, 0x202040, 0.5 ) );
+
+				var light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 1, 1, 1 ).normalize();
+				scene.add( light );
+
+				//
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( 0x101010 );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.sortObjects = false;
+				container.appendChild( renderer.domElement );
+
+				controls = new THREE.VRControls( camera );
+				controls.standing = true;
+
+				// controllers
+
+				controller1 = new THREE.ViveController( 0 );
+				controller1.standingMatrix = controls.getStandingMatrix();
+				scene.add( controller1 );
+
+				controller2 = new THREE.ViveController( 1 );
+				controller2.standingMatrix = controls.getStandingMatrix();
+				scene.add( controller2 );
+
+		
+				var onRenderFcts = []
+				window.onRenderFcts = onRenderFcts
+				
+				//////////////////////////////////////////////////////////////////////////////
+				//              Code Separator
+				//////////////////////////////////////////////////////////////////////////////
+
+;(function(){
+	
+				var material = new THREE.MeshPhongMaterial({
+					color: 'lightblue'
+				})
+				var geometry = new THREE.SphereGeometry(0.2)
+				var enemyObject = new THREE.Mesh(geometry, material)
+				enemyObject.position.set(0, 1,0.2)
+				scene.add(enemyObject)
+				window.enemyObject = enemyObject
+				
+				enemyObject.userData.targetPosition = new THREE.Vector3().copy(enemyObject.position);
+				var lastJumpAt = Date.now()
+				onRenderFcts.push(function(){
+					var age = Date.now() - lastJumpAt
+					if( age > 1000 ){
+						var targetPosition = enemyObject.userData.targetPosition
+						targetPosition.x += THREE.Math.randFloatSpread(0.5)
+						targetPosition.y += THREE.Math.randFloatSpread(0.5)
+						// targetPosition.z = 0.1
+						// enemyObject.position.x -= 0.1
+						lastJumpAt = Date.now()
+					}
+					
+				})
+				
+				onRenderFcts.push(function(){
+					var strengh = 0.2
+					var targetPosition = enemyObject.userData.targetPosition
+					enemyObject.position.x = enemyObject.position.x * (1-strengh) + targetPosition.x * (strengh)
+					enemyObject.position.y = enemyObject.position.y * (1-strengh) + targetPosition.y * (strengh)
+					enemyObject.position.z = enemyObject.position.z * (1-strengh) + targetPosition.z * (strengh)
+				})
+
+})()
+				
+				//////////////////////////////////////////////////////////////////////////////
+				//              Code Separator
+				//////////////////////////////////////////////////////////////////////////////
+				
+		
+				var laserBeam	= new THREEx.LaserBeam()
+				laserBeam.object3d.rotateY(Math.PI/2)
+				window.laserBeam = laserBeam
+				laserBeam.object3d.position.y = -0.03
+				laserBeam.object3d.scale.set(1,0.8,0.8)
+				controller1.add(laserBeam.object3d)
+		
+				// honor button press to put the ray
+				onRenderFcts.push(function(){
+					// return
+					// debugger
+					if( controller1.lastGamepad === null )	return
+		        		var button = controller1.lastGamepad.buttons[1]
+					// console.log('button', button.pressed)
+					if( button.value === 0 ){
+						// laserBeam.object3d.visible = true
+						laserBeam.object3d.scale.x = laserBeam.object3d.scale.x * (1-0.5) + (0.5)*button.value
+					}else{
+						laserBeam.object3d.scale.x = laserBeam.object3d.scale.x * (1-0.1) + (0.1)*button.value
+						// laserBeam.object3d.visible = true
+					}
+					laserBeam.object3d.scale.x = Math.max(laserBeam.object3d.scale.x, 0.0001)
+					if( laserBeam.object3d.scale.x === 0.0001 ){
+						laserBeam.object3d.visible = false
+					}else{
+						laserBeam.object3d.visible = true
+					}
+
+				})
+		
+				//////////////////////////////////////////////////////////////////////////////
+				//              Code Separator
+				//////////////////////////////////////////////////////////////////////////////
+				
+;(function(){
+	onRenderFcts.push(function(){
+		if( laserBeam.object3d.visible === false ){
+			enemyObject.material.color.set('lightblue')			
+			return
+		}
+		var start = laserBeam.object3d.localToWorld(new THREE.Vector3(0,0,0))
+		var end = laserBeam.object3d.localToWorld(new THREE.Vector3(1,0,0))
+		var line3 = new THREE.Line3
+		line3.set(start, end)
+		
+		var enemyPoint = enemyObject.position.clone()
+		
+		var closestPoint = line3.closestPointToPoint(enemyPoint, true)
+		var distance = closestPoint.distanceTo(enemyPoint)
+		if( distance < enemyObject.geometry.parameters.radius + laserBeam.object3d.scale.y*0.1 ){
+			enemyObject.material.color.set('red')
+			enemyObject.position.set(0, 1, 0.2)
+			enemyObject.position.x += THREE.Math.randFloatSpread(0.5)*2vr
+			enemyObject.position.y += THREE.Math.randFloatSpread(0.5)*2
+			enemyObject.userData.targetPosition.copy(enemyObject.position)
+		}else{
+			enemyObject.material.color.set('lightblue')			
+		}
+	})
+})()
+		
+	// onRenderFcts.push(function(delta, now){
+	// 	var object3d	= laserBeam.object3d
+	// 	object3d.rotation.x	+= 1 * delta;
+	// 	object3d.rotation.y	+= 0.01 * delta;		
+	// })
+;(function(){
+return
+	// from @sylvainpv sylvain pollet - https://twitter.com/SylvainPV/status/236255017508671488
+	// var swinging	
+	var oldPosition	= new THREE.Vector3;
+	var swinging		= false;
+	onRenderFcts.push(function(){
+		var object3D	= controller1;
+		var position	= new THREE.Vector3().setFromMatrixPosition(object3D.matrixWorld);
+
+		if( swinging === true ){
+			// copy old position
+			oldPosition.copy(position)
+			return;	
+		}
+
+		var deltaX	= position.x - oldPosition.x;
+		//console.log('delta', deltaX)
+		if( Math.abs(deltaX) > 0.3/3 ){
+			playSound("sound_swing3")			
+		}else if( Math.abs(deltaX) > 0.2/3 ){
+			playSound("sound_swing2")			
+		}else if( Math.abs(deltaX) > 0.1/3 ){
+			playSound("sound_swing1")			
+		}
+		
+		// copy old position
+		oldPosition.copy(position)
+		function playSound(domId){
+console.log('playSound', domId)
+			document.getElementById(domId).play();
+			swinging	= true;
+			setTimeout(function(){ swinging = false }, 700);
+       		}
+	})
+	
+})()
+
+
+				var loader = new THREE.OBJLoader();
+				loader.setPath( 'models/obj/vive-controller/' );
+				loader.load( 'vr_controller_vive_1_5.obj', function ( object ) {
+
+					var loader = new THREE.TextureLoader();
+					loader.setPath( 'models/obj/vive-controller/' );
+
+					var controller = object.children[ 0 ];
+					controller.material.map = loader.load( 'onepointfive_texture.png' );
+					controller.material.specularMap = loader.load( 'onepointfive_spec.png' );
+
+					controller1.add( object.clone() );
+					controller2.add( object.clone() );
+
+				} );
+
+				effect = new THREE.VREffect( renderer );
+
+				if ( WEBVR.isAvailable() === true ) {
+
+					document.body.appendChild( WEBVR.getButton( effect ) );
+
+				}
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				effect.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				render();
+
+			}
+
+			function render() {
+
+				controls.update();
+				
+				onRenderFcts.forEach(function(onRenderFct){
+					onRenderFct()
+				})
+
+
+				effect.render( scene, camera );
+
+			}
+
+		</script>
+<!-- add sound -->
+<audio src="sounds/sounds/saberswing1.ogg" id="sound_swing1" preload="auto"></audio>
+<audio src="sounds/sounds/saberswing2.ogg" id="sound_swing2" preload="auto"></audio>
+<audio src="sounds/sounds/saberswing3.ogg" id="sound_swing3" preload="auto"></audio>
+<audio src="sounds/sounds/saberon.ogg" id="sound_on" preload="auto"></audio>
+<audio src="sounds/sounds/saberoff.ogg" id="sound_off" preload="auto"></audio>
+	</body>
+</html>
