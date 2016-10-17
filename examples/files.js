@@ -185,6 +185,7 @@ var files = {
 		"webgl_physics_cloth",
 		"webgl_physics_volume",
 		"webgl_physics_convex_break",
+		"webgl_physics_worker",
 		"webgl_points_billboards",
 		"webgl_points_billboards_colors",
 		"webgl_points_dynamic",
